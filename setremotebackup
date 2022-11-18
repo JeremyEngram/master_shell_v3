@@ -1,0 +1,25 @@
+#!/bin/bash
+#sudo ln -s /media/backup /media/jeremy/backup
+
+
+
+
+echo "LIST GROUPS"; groupss && cat /etc/group | grep backup sambashare
+
+echo "GROUPS THAT THE FOLLOWING USERS $USER/root BELONG TO:> " groups $USER root
+
+echo "ADD MEDIA GROUP TO:> /MEDIA/BACKUP:> " sudo chmod +rwx /media/backup && sudo chmod g+rwx /media/backup
+
+echo "CREATE A NEW GROUP TO GIVE PERMISSIONS TO:> /MEDIA/BACKUP:> " sudo groupadd -r media
+
+echo "ADD EXISTING USERS TO MEDIA GROUP:> " sudo usermod -a -G media jeremy
+
+
+echo "VERIFY MEDIA GROUP WAS CREATED:> " getent group | grep media
+
+
+echo "CHANGE /MEDIA/JEREMY/BACKUP TO /MEDIA/BACKUP"
+
+echo "ADD USERS TO COMMON GROUP: = users media"
+
+echo "SET THE DIR GROUP TO ABOVE GROUP:> " chgrp media g+rw 

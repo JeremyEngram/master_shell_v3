@@ -1,0 +1,7 @@
+#!/bin/bash
+
+
+echo "grep -lir 'string' ~/directory/* | xargs mv -t DEST"
+
+read -p "SearchString: " string indir dest
+grep -lir '$string' ~/indir/* | xargs mv -t $dest

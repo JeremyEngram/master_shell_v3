@@ -1,0 +1,6 @@
+  GNU nano 5.4                                                                                                     remotebackup *                                                                                                             
+#!/bin/sh
+
+current_date=$(date +"%m-%d-%Y")
+
+ssh research@lab.lan “sudo dd if=/dev/mmcblk0 bs=1M | gzip -” | dd of=~/home/jeremy/Backups/researchlab_backup_${current_date}.gz

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+adb reverse tcp:443 tcp:443
+adb reverse tcp:3883 tcp:3883
+
+adb reverse --list

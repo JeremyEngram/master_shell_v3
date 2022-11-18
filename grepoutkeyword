@@ -1,0 +1,7 @@
+
+#will grep out all text except the word command if it exists in file - also good for ip address ranges
+grep -oh "\command\w*" /var/log/auth.log
+
+
+journalctl --since "yyyy-mm-dd hh:mm" --until "yyyy-mm-dd hh:mm"
+journalctl --since "2022-02-18" --until "2022-02-21 04:00"

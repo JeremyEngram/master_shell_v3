@@ -1,0 +1,3 @@
+#Find IN files recusively
+read -p "Search For In All Files Recursively: " src; find /etc -type f -print0 2>/dev/null | xargs -0 grep --color=AUTO -Hn '$src' 2>/dev/null
+

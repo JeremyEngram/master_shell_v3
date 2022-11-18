@@ -1,0 +1,18 @@
+#!/bin/bash
+
+LOGDIR=/var/log
+
+echo "		LOG CREATION TOOL		"
+
+echo
+echo " CREATE A NEW LOG AND SET PERMISSIONS? "
+
+read -p "mklog:> " mklog | sudo -s <<< tee -a /var/log/newlogpaths.log
+
+sudo touch $LOGDIR/$mklog.log; echo "CREATED $mklog in $LOGDIR!";
+echo "#### SETTING $LODIR/$mklog PERMISSIONS ###";
+echo " sudo chown jeremy:adm $LOGDIR/$mklog.log " 
+
+sudo chown jeremy:adm $LOGDIR/$mklog.log; 
+
+echo "$LOGDIR/$mklog PERMISSIONS SET AND IS NOW WRITEABLE FOR SHELL OUTPUT!"

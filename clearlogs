@@ -1,0 +1,27 @@
+# >/var/log/messages
+
+The following is compatible with various Linux or Unix shells:
+: > /var/log/messages
+
+Verify file size:
+# ls -l /var/log/messages
+
+If you really wanted to delete or remove a file type the following rm command:
+# rm /var/log/message
+
+
+
+truncate -s 0 www.cyberciti.biz_access.log
+
+
+
+cat /dev/null > www.cyberciti.biz_access.log
+
+
+
+
+cp /dev/null /var/log/nginx/php_error.log
+
+
+
+echo -n "" > /path/to/java/appserver.log

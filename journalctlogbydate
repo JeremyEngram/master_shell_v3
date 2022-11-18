@@ -1,0 +1,3 @@
+
+#show logs in journalctl by date range
+journalctl --since "2 days ago"
