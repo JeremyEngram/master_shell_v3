@@ -19,6 +19,30 @@ touch /var/log/apt/search.log /var/log/apt/show.log /var/log/apt/implemented.log
 chown $USER:$USER /var/log/apt/search.log /var/log/apt/show.log /var/log/apt/implemented.log
 chmod 777 /var/log/apt/search.log /var/log/apt/show.log /var/log/apt/implemented.log
 
+
+# Install awesome github optional packages into linux framework
+wget -qO - https://raw.githubusercontent.com/shinokada/awesome/main/install | bash -s install
+export PATH=$HOME/.local/share/bin:$PATH
+. ~/.zshrc
+. ~/.bashrc
+
+awesome update awesome
+
+# Installing a repo using user/repo
+awesome install shinokada/gitstart
+# Installing a repo using user/repo.git
+awesome install shinokada/gitstart.git
+# Installing a repo whose main script is different from the repo name
+awesome install raylee/tldr-sh-client tldr
+# Same as above but using https
+awesome install https://github.com/shinokada/cleanit
+awesome install https://github.com/raylee/tldr-sh-client tldr
+# Installing a repo using install option instead of -i
+awesome install https://github.com/shinokada/gitstart.git
+
+
+
+
 Create symbolic links to /usr/local/bin/
 ln -s /opt/* /usr/local/bin/*
 
