@@ -72,5 +72,31 @@ echo
 Install extra packages not included in tasksel
 apt install -y cockpit gftp terminator exfat-fuse exfat-utils libcanberra-gtk-module banner
 
+
+# Install OpenSSH server
+sudo apt-get update
+sudo apt-get install -y openssh-server
+
+# Install VNC server
+sudo apt-get install -y xfce4 xfce4-goodies tightvncserver
+
+# Configure VNC server
+vncserver
+vncserver -kill :1
+mv ~/.vnc/xstartup ~/.vnc/xstartup.bak
+echo "#!/bin/bash" >> ~/.vnc/xstartup
+echo "xrdb /home/$(whoami)/.Xresources" >> ~/.vnc/xstartup
+echo "startxfce4 &" >> ~/.vnc/xstartup
+chmod +x ~/.vnc/xstartup
+
+# Install SSHFS
+sudo apt-get install -y sshfs
+
+# Copy all scripts from /usr/local/bin on existing host to another host
+EXISTING_HOST="existing-host"
+NEW_HOST="new-host"
+SCRIPTS_DIR="/usr/local/bin"
+ssh $EXISTING_HOST "tar czf - $SCRIPTS_DIR" | ssh $NEW_HOST "tar xzf - -C /"
+
 Display completion message
 echo "INIT FIRST INSTALL COMPLETED"
