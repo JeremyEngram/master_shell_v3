@@ -98,5 +98,29 @@ NEW_HOST="new-host"
 SCRIPTS_DIR="/usr/local/bin"
 ssh $EXISTING_HOST "tar czf - $SCRIPTS_DIR" | ssh $NEW_HOST "tar xzf - -C /"
 
+
+
+# Install dependencies
+sudo apt-get update
+sudo apt-get install build-essential cmake git libboost-all-dev zlib1g-dev liblzma-dev libgoogle-perftools-dev libgflags-dev libprotobuf-dev protobuf-compiler libgrpc-dev libgrpc++-dev libcurl4-openssl-dev libssl-dev libz-dev -y
+
+# Clone ChatGPT repository
+git clone https://github.com/finetuneanon/ChatGPT.git
+
+# Build ChatGPT
+cd ChatGPT
+mkdir build && cd build
+cmake ..
+make
+
+# Test ChatGPT
+./chatgpt
+
+# Optionally install ChatGPT system-wide
+sudo make install
+
+
+
+
 Display completion message
 echo "INIT FIRST INSTALL COMPLETED"
