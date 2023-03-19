@@ -6,13 +6,23 @@ echo
 echo "FULL SYSTEM FIRST TIME INSTALL OF ALL USER PREFERENCES AND CONFIGURATIONS"
 echo
 
-Check if the script is run by root
+ # VERIFY ROOT ->; OR Exit; Check if the script is run by root
 if [ "$(id -u)" != "0" ]; then
 echo "This script must be run as root"
 exit 1
 fi
 
-Create log directories and custom logs
+# rsyslog implementation
+
+
+# implement aliases and bash command functions into backend while indexing man pages
+cp .bashrc .bashrc.bak  && echo 'copied backup of .bashrc.bak.orig and gitting current aliasmaster repo' git clone https://github.com/JeremyEngram/aliasmaster /tmp/aliasmaster/ && mv /tmp/aliasmaster/ ~/ || ls 
+
+
+sudo apt install python python2 python3 python3-pip openssh-server sshfs apt-clone
+
+
+ # Create log directories and custom logs
 mkdir -p /var/log/nmap
 chmod 777 /var/log/nmap
 touch /var/log/apt/search.log /var/log/apt/show.log /var/log/apt/implemented.log
@@ -20,13 +30,15 @@ chown $USER:$USER /var/log/apt/search.log /var/log/apt/show.log /var/log/apt/imp
 chmod 777 /var/log/apt/search.log /var/log/apt/show.log /var/log/apt/implemented.log
 
 
-# Install awesome github optional packages into linux framework
+ # Install awesome github optional packages into linux framework
 wget -qO - https://raw.githubusercontent.com/shinokada/awesome/main/install | bash -s install
-export PATH=$HOME/.local/share/bin:$PATH
+export PATH=$HOME/.local/share/bin/awesome:$PATH
 . ~/.zshrc
 . ~/.bashrc
 
-awesome update awesome
+
+
+awesome -v && awesome update awesome
 
 # Installing a repo using user/repo
 awesome install shinokada/gitstart
@@ -40,66 +52,90 @@ awesome install https://github.com/raylee/tldr-sh-client tldr
 # Installing a repo using install option instead of -i
 awesome install https://github.com/shinokada/gitstart.git
 
+awesome install https://github.com/JeremyEngram/esptool-gui.git
+
+awesome ls 
+awesome update all
 
 
-
-Create symbolic links to /usr/local/bin/
+ # Create symbolic links to /usr/local/bin/
 ln -s /opt/* /usr/local/bin/*
+ln -s /usr/local/bin/* /home/$USER/
 
-Disable apport
+
+
+# Git init installer scripts temporarily on system call
+git clone https://github.com/JeremyEngram/init.scripts.git /tmp/; ls /tmp/init.scripts.git || chmod +x /tmp/init.scripts/*; echo "init scripts temp armed for install..."; done
+
+
+
+
+ # Disable apport
 systemctl stop apport
 sed -i 's/enabled=1/enabled=0/g' /etc/default/apport
 
-Full system update and upgrade
-echo "Full System Update & Upgrade"
-apt update && apt upgrade -y && apt autoremove -y
-echo
 
-Minimize window launchers on click
+
+ # Full system update and upgrade
+echo "Full System Update & Upgrade"
+apt update && apt upgrade -y && apt autoremove -y; echo
+
+ # Minimize window launchers on click
 gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
 
-Take ownership of commonly used system folders
+ # Take ownership of commonly used system folders
 echo "Taking Full Ownership Of System Directories"
 chown $USER /opt /usr/local/bin /var/www/html
-echo
 
-Install Zeit and Ubuntu-Clean
+
+Install zeit and ubuntu-clean
 add-apt-repository -y ppa:blaze/main
 add-apt-repository -y ppa:gerardpuig/ppa
 apt update
 apt install -y zeit ubuntu-cleaner
 
-Install TimeShift Backup
-add-apt-repository -y ppa:teejee2008/ppa
-apt update
-apt install -y timeshift
+
 
 Install Git and clone master_shell repository
 echo "Implementing Github Master_Shell Scripts"
 apt install -y git
 cd /usr/local/bin
 git clone https://github.com/JeremyEngram/master_shell.git
+git clone https://github.com/JeremyEngram/master_shell_v2.git
+git clone git clone https://github.com/JeremyEngram/master_shell_v3.git
 mv /usr/local/bin/master_shell/* /usr/local/bin/
 rm -rf /usr/local/bin/master_shell/
-echo
+
+
+
 
 Make all custom scripts executable
 echo "Arming All Custom Scripts For Use... ARMED!"
 chmod +x /usr/local/bin/*
+chmod +x /opt/*/*.sh/
+chmod +x /opt/*/*.py
 echo
+
+
+
 
 Install packages using tasksel
 echo "Implementing Full Custom Packages Install... WAIT FOR IT!"
 echo "taskel" "taskel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" "tasksel" | xargs -I {} sh -c "tasksel --task-packages {} --interactive"
 echo
 
-Install extra packages not included in tasksel
-apt install -y cockpit gftp terminator exfat-fuse exfat-utils libcanberra-gtk-module banner
 
 
-# Install OpenSSH server
-sudo apt-get update
-sudo apt-get install -y openssh-server
+# Install extra system packages supporting filesystem, partition, mounting, formatting  
+apt install -y terminator ntfs-3g exfat-fuse exfat-utils libcanberra-gtk-module banner
+
+
+
+# Implement Arduino microcontroller and driver support for common arduino wireless boards esp8266 esp32 usb2uart support chp310 ftdi usb2ttl drivers
+apt install arduino; 
+awesome alias esptool install https://github.com/JeremyEngram/esptool-gui
+
+
 
 # Install VNC server
 sudo apt-get install -y xfce4 xfce4-goodies tightvncserver
@@ -113,6 +149,9 @@ echo "xrdb /home/$(whoami)/.Xresources" >> ~/.vnc/xstartup
 echo "startxfce4 &" >> ~/.vnc/xstartup
 chmod +x ~/.vnc/xstartup
 
+
+
+
 # Install SSHFS
 sudo apt-get install -y sshfs
 
@@ -124,9 +163,12 @@ ssh $EXISTING_HOST "tar czf - $SCRIPTS_DIR" | ssh $NEW_HOST "tar xzf - -C /"
 
 
 
-# Install dependencies
+
+# Install ChatGPT dependencies
 sudo apt-get update
 sudo apt-get install build-essential cmake git libboost-all-dev zlib1g-dev liblzma-dev libgoogle-perftools-dev libgflags-dev libprotobuf-dev protobuf-compiler libgrpc-dev libgrpc++-dev libcurl4-openssl-dev libssl-dev libz-dev -y
+
+
 
 # Clone ChatGPT repository
 git clone https://github.com/finetuneanon/ChatGPT.git
