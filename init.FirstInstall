@@ -52,6 +52,11 @@ apt install snap snapd && snap install riseup-vpn --classic || echo "snap was un
 cp .bashrc .bashrc.bak  && echo 'copied backup of .bashrc.bak.orig and gitting current aliasmaster repo' git clone https://github.com/JeremyEngram/aliasmaster /tmp/aliasmaster/ && mv /tmp/aliasmaster/ ~/ || ls 
 
 
+# implement custom .bashrc features and functions
+wget https://github.com/JeremyEngram/master-bash/blob/main/init.Mbashrc | bash 
+chmod +x https://github.com/JeremyEngram/master-bash/blob/main/init.Mbashrc; rm -rf init.Mbashrc; echo 'removed init.Mbashrc implementation file...'
+
+
 sudo apt install python python2 python3 python3-pip openssh-server sshfs apt-clone
 
 
@@ -86,6 +91,8 @@ awesome install https://github.com/raylee/tldr-sh-client tldr
 awesome install https://github.com/shinokada/gitstart.git
 
 awesome install https://github.com/JeremyEngram/esptool-gui.git
+awesome install https://github.com/JeremyEngram/linux-research-tools
+awesome install https://github.com/JeremyEngram/easybashgui.git
 
 awesome ls 
 awesome update all
@@ -140,9 +147,18 @@ mv /usr/local/bin/master_shell/* /usr/local/bin/
 rm -rf /usr/local/bin/master_shell/
 
 
+# Implementing temp install of shelldump script repos to tmp
+git clone https://github.com/JeremyEngram/shelldump.git /tmp
+git clone https://github.com/JeremyEngram/shelldump2.git
 
 
-Make all custom scripts executable
+
+# Implementing temp install of researchlab settings
+git clone https://github.com/JeremyEngram/researchlab.git /tmp
+
+
+
+# Make all custom scripts executable
 echo "Arming All Custom Scripts For Use... ARMED!"
 chmod +x /usr/local/bin/*
 chmod +x /opt/*/*.sh/
