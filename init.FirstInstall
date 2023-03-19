@@ -39,6 +39,12 @@ apt install glogg
 # create desktop icons
 
 
+
+# implement install and enable services with status reports, if service status is not enabled then systemctl enable $srv.service
+apt install -y apache2 mariadb-server && service --status-all | grep "[+]" | $(printf 'active services'); systemctl status $srv.service
+systemctl enable *.service
+
+
 # install snap and riseup-vpn
 apt install snap snapd && snap install riseup-vpn --classic || echo "snap was unable to install riseup-vpn, versions do not match - removing snap for now" && apt remove --purge snap && apt autoremove && apt clean;
 
@@ -235,6 +241,13 @@ make
 sudo make install
 
 
+
+# Creating cold-site apt-system backup
+apt-clone clone --backup $hostname-apt-clone.bak && echo 'sudo apt-clone --restore $hostname-apt-clone.bak'
+
+
+# SHOWTIME all available implemented resources 
+alias | tee -a /home/$USER/
 
 
 Display completion message
