@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Display banner
+# Display banner
 echo "INIT FIRST INSTALL"
 echo
 echo "FULL SYSTEM FIRST TIME INSTALL OF ALL USER PREFERENCES AND CONFIGURATIONS"
@@ -12,7 +12,40 @@ echo "This script must be run as root"
 exit 1
 fi
 
+
+# set universal hostname
+sudo hostnamectl set $hostname; read
+
+apt install avahi-daemon
+
+
+
+# set static ip address
+
+
+# if ping hostname matches static ip then ssh possible by hostname
+ping $hostname >> /dev/null
+
+
+# implement gui-based logging with glogg 
+apt install glogg
+
 # rsyslog implementation
+
+
+# enable rpi usb-otg modes 
+
+
+# create desktop icons
+
+
+# install snap and riseup-vpn
+apt install snap snapd && snap install riseup-vpn --classic || echo "snap was unable to install riseup-vpn, versions do not match - removing snap for now" && apt remove --purge snap && apt autoremove && apt clean;
+
+
+# make original backups of all system conf files
+
+
 
 
 # implement aliases and bash command functions into backend while indexing man pages
