@@ -119,6 +119,9 @@ awesome install https://github.com/JeremyEngram/cronauto.git
 awesome install https://github.com/imjeffparedes/iot-esp8266-arduino-interface.git
 
 
+# Security & Pentesting Tools Resources 
+awesome install https://github.com/stormshadow07/HackTheWorld.git
+
 
  # Create symbolic links to /usr/local/bin/
 ln -s /opt/* /usr/local/bin/*
