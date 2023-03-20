@@ -14,13 +14,29 @@ fi
 
 
 # set universal hostname
-sudo hostnamectl set $hostname; read
+read -p "Enter the new hostname: " hostname && sudo hostnamectl set-hostname "$hostname"
 
+# make system use hostnames to connect via ssh
 apt install avahi-daemon
 
 
 
 # set static ip address
+# Set the static IP address, netmask, gateway, and DNS server
+ifconfig eth0 192.168.1.100 netmask 255.255.255.0 up
+route add default gw 192.168.1.1
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
+
+# Save the settings to the network interface configuration file
+echo "auto eth0" > /etc/network/interfaces
+echo "iface eth0 inet static" >> /etc/network/interfaces
+echo "address 192.168.1.100" >> /etc/network/interfaces
+echo "netmask 255.255.255.0" >> /etc/network/interfaces
+echo "gateway 192.168.1.1" >> /etc/network/interfaces
+echo "dns-nameservers 8.8.8.8" >> /etc/network/interfaces
+
+# Restart the network interface to apply the new settings
+/etc/init.d/networking restart
 
 
 # if ping hostname matches static ip then ssh possible by hostname
@@ -54,6 +70,7 @@ apt install snap snapd && snap install riseup-vpn --classic || echo "snap was un
 
 
 # make original backups of all system conf files
+sudo find /etc -name '*.conf' -print0 | xargs -0 -I {} sh -c 'cp {} {}.bak'
 
 
 
