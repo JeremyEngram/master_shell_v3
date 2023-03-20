@@ -265,6 +265,11 @@ sudo make install
 
 
 
+wget https://github.com/imjeffparedes/iot-esp8266-arduino-interface/archive/refs/heads/master.zip -o iot-esp8266-arduino-interface.zip
+wget https://github.com/Isaranu/Arduino-send-data-over-WiFi-to-Android/archive/refs/heads/master.zip -o Arduino-send-data-over-WiFi-to-Android.zip
+wget https://github.com/delf1980/ESP8266_PHP_Webserver/archive/refs/heads/master.zip -o ESP8266_PHP_Webserver.zip
+
+
 # Creating cold-site apt-system backup
 apt-clone clone --backup $hostname-apt-clone.bak && echo 'sudo apt-clone --restore $hostname-apt-clone.bak'
 
