@@ -132,7 +132,7 @@ ln -s /usr/local/bin/* /home/$USER/
 # Git init installer scripts temporarily on system call
 git clone https://github.com/JeremyEngram/init.scripts.git /tmp/; ls /tmp/init.scripts.git || chmod +x /tmp/init.scripts/*; echo "init scripts temp armed for install..."; done
 
-
+git clone https://github.com/JeremyEngram/MyPyScripts.git
 
 
  # Disable apport
