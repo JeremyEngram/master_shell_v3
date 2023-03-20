@@ -40,6 +40,10 @@ apt install glogg
 
 
 
+
+
+
+
 # implement install and enable services with status reports, if service status is not enabled then systemctl enable $srv.service
 apt install -y apache2 mariadb-server && service --status-all | grep "[+]" | $(printf 'active services'); systemctl status $srv.service
 systemctl enable *.service
@@ -99,9 +103,21 @@ awesome install https://github.com/shinokada/gitstart.git
 awesome install https://github.com/JeremyEngram/esptool-gui.git
 awesome install https://github.com/JeremyEngram/linux-research-tools
 awesome install https://github.com/JeremyEngram/easybashgui.git
+awesome install https://github.com/JeremyEngram/linux-tweaks.git
+
+awesome https://github.com/JeremyEngram/generate-and-send-ssh-key.git
+
+cd generate-and-send-ssh-key
+./generate-and-send-ssh-key.sh --user $USER --host $hostname
 
 awesome ls 
 awesome update all
+
+awesome install https://github.com/JeremyEngram/cronauto.git
+
+
+awesome install https://github.com/imjeffparedes/iot-esp8266-arduino-interface.git
+
 
 
  # Create symbolic links to /usr/local/bin/
@@ -139,6 +155,10 @@ add-apt-repository -y ppa:blaze/main
 add-apt-repository -y ppa:gerardpuig/ppa
 apt update
 apt install -y zeit ubuntu-cleaner
+
+
+
+curl https://downloads.realvnc.com/download/file/viewer.files/VNC-Viewer-7.0.1-Linux-ARM.deb | dpkg -i
 
 
 
