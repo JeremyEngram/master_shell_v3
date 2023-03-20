@@ -278,5 +278,46 @@ apt-clone clone --backup $hostname-apt-clone.bak && echo 'sudo apt-clone --resto
 alias | tee -a /home/$USER/
 
 
+
+# Define remote host and directory
+REMOTE_HOST="192.168.1.232"
+REMOTE_DIR="/"
+
+# Define remote user
+REMOTE_USER="jeremy"
+
+
+# Define local mount point
+LOCAL_MOUNT_POINT="/home/research/refuge"
+
+# Define SSH key file (optional)
+SSH_KEY_FILE="~/.ssh/id_rsa.pub"
+
+# Create local mount point directory if it doesn't exist
+if [ ! -d "$LOCAL_MOUNT_POINT" ]; then
+    mkdir -p "$LOCAL_MOUNT_POINT"
+fi
+
+
+
+# Create local mount point directory if it doesn't exist
+if [ ! -d "$LOCAL_MOUNT_POINT" ]; then
+    mkdir -p "$LOCAL_MOUNT_POINT"
+fi
+
+# Mount remote directory using sshfs with alternate user
+if [ -n "$SSH_KEY_FILE" ]; then
+    sshfs -o IdentityFile="$SSH_KEY_FILE" "$REMOTE_USER"@"$REMOTE_HOST":"$REMOTE_DIR" "$LOCAL_MOUNT_POINT"
+else
+    sshfs "$REMOTE_USER"@"$REMOTE_HOST":"$REMOTE_DIR" "$LOCAL_MOUNT_POINT"
+fi
+
+# Add mount point to /etc/fstab so it will be mounted on future reboots
+echo "sshfs#$REMOTE_HOST:$REMOTE_DIR $LOCAL_MOUNT_POINT fuse defaults,user,idmap=user 0 0" | sudo tee -a /etc/fstab > /dev/null
+
+
+
+
+
 Display completion message
 echo "INIT FIRST INSTALL COMPLETED"
