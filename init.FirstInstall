@@ -143,6 +143,73 @@ chown $USER:$USER /var/log/apt/search.log /var/log/apt/show.log /var/log/apt/imp
 chmod 777 /var/log/apt/search.log /var/log/apt/show.log /var/log/apt/implemented.log
 
 
+
+
+# Define the list of allowed hosts and hostnames
+allowed_hosts=("192.168.1.1" "192.168.1.255")
+allowed_hostnames=("datacenter" "masterclient")
+
+# Backup the original sshd_config file
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+
+# Allow SSH access from specified hosts
+for host in "${allowed_hosts[@]}"; do
+    sudo sed -i "/^#AllowUsers/a AllowUsers *@$host" /etc/ssh/sshd_config
+done
+
+# Allow SSH access from specified hostnames
+for hostname in "${allowed_hostnames[@]}"; do
+    sudo sed -i "/^#AllowUsers/a AllowUsers *@$hostname" /etc/ssh/sshd_config
+done
+
+# Restart the SSH service to apply the changes
+sudo systemctl restart sshd.service
+
+echo "SSH access configured successfully"
+
+
+
+
+
+# Edit /etc/hosts - Define the list of new hostnames and IP addresses to add to hosts config file
+new_entries=(
+    "192.168.1.64   datacenter.lan    dc1"
+    "192.168.1.159   srv2.datacenter.lan    dc2"
+)
+
+# Backup the original hosts file
+sudo cp /etc/hosts /etc/hosts.bak
+
+# Add new entries to the hosts file
+for entry in "${new_entries[@]}"; do
+    echo "$entry" | sudo tee -a /etc/hosts > /dev/null
+done
+
+echo "Hosts file configured successfully"
+
+
+
+
+# SSH HOST KEY GEN FOR ONE TIME LOGIN - Define the remote server address and username
+remote_host="dc1.datacenter.lan"
+remote_user="research"
+
+# Generate a new SSH key pair (if necessary)
+if [ ! -f ~/.ssh/id_rsa.pub ]; then
+    ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+fi
+
+# Copy the public key to the remote server
+ssh-copy-id -i ~/.ssh/id_rsa.pub $remote_user@$remote_host
+
+# Temporarily disable password authentication on the remote server
+ssh $remote_user@$remote_host "sudo sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && sudo systemctl restart sshd.service"
+
+echo "SSH key-based authentication configured successfully. You can now log in to $remote_host as $remote_user without a password."
+
+
+
+
  # Install awesome github optional packages into linux framework
 wget -qO - https://raw.githubusercontent.com/shinokada/awesome/main/install | bash -s install
 export PATH=$HOME/.local/share/bin/awesome:$PATH
@@ -150,7 +217,7 @@ export PATH=$HOME/.local/share/bin/awesome:$PATH
 . ~/.bashrc
 
 
-
+# IMPLEMENT AND USE AWESOME GIT SCRIPT PACKAGE MANAGER
 awesome -v && awesome update awesome
 
 # Installing a repo using user/repo
