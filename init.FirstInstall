@@ -40,20 +40,68 @@ echo "dns-nameservers 8.8.8.8" >> /etc/network/interfaces
 
 
 # if ping hostname matches static ip then ssh possible by hostname
-ping $hostname >> /dev/null
+ping -c 1 $hostname > /dev/null 2>&1
 
 
 # implement gui-based logging with glogg 
 apt install glogg
 
+
+
+
 # rsyslog implementation
+# Install rsyslog
+sudo apt-get update
+sudo apt-get install -y rsyslog
+
+# Configure rsyslog
+sudo sed -i 's/#\$ModLoad imudp/\$ModLoad imudp/' /etc/rsyslog.conf
+sudo sed -i 's/#\$UDPServerRun 514/\$UDPServerRun 514/' /etc/rsyslog.conf
+sudo systemctl restart rsyslog.service
+
+# Enable rsyslog service to start at boot
+sudo systemctl enable rsyslog.service
+
+echo "rsyslog installed and configured successfully"
+
+
 
 
 # enable rpi usb-otg modes 
 
 
-# create desktop icons
 
+
+
+# create desktop icons
+# Define the path to the scripts directory
+scripts_dir="/usr/local/bin"
+
+# Define the path to the desktop directory
+desktop_dir="$HOME/Desktop"
+
+# Loop through all scripts in the directory
+for script in $(find "$scripts_dir" -type f -executable); do
+    # Get the script name without the path or extension
+    script_name="$(basename "$script" | sed 's/\..*$//')"
+
+    # Create a desktop file for the script
+    desktop_file="$desktop_dir/$script_name.desktop"
+    echo "[Desktop Entry]
+    Version=1.0
+    Type=Application
+    Name=$script_name
+    Comment=$script_name
+    Exec=$script
+    Icon=utilities-terminal
+    Terminal=false
+    Categories=Utility;" > "$desktop_file"
+    
+    # Set the file permissions for the desktop file
+    chmod +x "$desktop_file"
+done
+
+echo "Desktop icons created successfully"
 
 
 
@@ -170,19 +218,20 @@ echo "Taking Full Ownership Of System Directories"
 chown $USER /opt /usr/local/bin /var/www/html
 
 
-Install zeit and ubuntu-clean
+Install Zeit and ubuntu-clean
 add-apt-repository -y ppa:blaze/main
 add-apt-repository -y ppa:gerardpuig/ppa
 apt update
 apt install -y zeit ubuntu-cleaner
+apt install -y bleachbit
 
 
 
-curl https://downloads.realvnc.com/download/file/viewer.files/VNC-Viewer-7.0.1-Linux-ARM.deb | dpkg -i
 
 
 
-Install Git and clone master_shell repository
+
+# Install Git and clone master_shell repository
 echo "Implementing Github Master_Shell Scripts"
 apt install -y git
 cd /usr/local/bin
@@ -195,7 +244,7 @@ rm -rf /usr/local/bin/master_shell/
 
 # Implementing temp install of shelldump script repos to tmp
 git clone https://github.com/JeremyEngram/shelldump.git /tmp
-git clone https://github.com/JeremyEngram/shelldump2.git
+git clone https://github.com/JeremyEngram/shelldump2.git /tmp
 
 
 
@@ -209,7 +258,7 @@ echo "Arming All Custom Scripts For Use... ARMED!"
 chmod +x /usr/local/bin/*
 chmod +x /opt/*/*.sh/
 chmod +x /opt/*/*.py
-echo
+
 
 
 
@@ -233,6 +282,17 @@ awesome alias esptool install https://github.com/JeremyEngram/esptool-gui
 
 
 # Install VNC server
+# Set the download URL and file name
+download_url="https://www.realvnc.com/download/file/vnc.files/VNC-Server-6.8.0-Linux-x64.deb"
+filename="VNC-Server-6.8.0-Linux-x64.deb"
+
+# Download the file using wget
+wget -O "$filename" "$download_url"
+
+# Get VNC Viewer
+curl https://downloads.realvnc.com/download/file/viewer.files/VNC-Viewer-7.0.1-$(whoami).deb | dpkg -i
+
+# Install VNC to linux manually if site's .deb install fails
 sudo apt-get install -y xfce4 xfce4-goodies tightvncserver
 
 # Configure VNC server
@@ -248,7 +308,7 @@ chmod +x ~/.vnc/xstartup
 
 
 # Install SSHFS
-sudo apt-get install -y sshfs
+apt-get install -y sshfs
 
 # Copy all scripts from /usr/local/bin on existing host to another host
 EXISTING_HOST="existing-host"
