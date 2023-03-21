@@ -12,14 +12,28 @@ echo "This script must be run as root"
 exit 1
 fi
 
+echo "Setting root password to 'root'"
+sudo passwd root << EOF
+root
+root
+EOF
+
+# Add the following line to the end of the sudoers file
+echo "Defaults timestamp_timeout=15" | sudo tee -a /etc/sudoers
 
 # set universal hostname
 read -p "Enter the new hostname: " hostname && sudo hostnamectl set-hostname "$hostname"
 
 # make system use hostnames to connect via ssh
-apt install avahi-daemon
+apt install avahi-daemon inet-tools nmap 
 
+# remove linux bloatware
+apt remove --purge -y gnome unity-webapps-common amazon* libreoffice-* gnome-games gnome-sudoku aisleriot rhythmbox gnome-music thunderbird shotwell
 
+# Clean up the system
+apt-get autoremove -y
+apt-get autoclean -y
+apt-get clean -y
 
 # set static ip address
 # Set the static IP address, netmask, gateway, and DNS server
@@ -37,6 +51,31 @@ echo "dns-nameservers 8.8.8.8" >> /etc/network/interfaces
 
 # Restart the network interface to apply the new settings
 /etc/init.d/networking restart
+
+
+
+# Install the DHCP server
+sudo apt-get update
+sudo apt-get install -y isc-dhcp-server
+
+# Configure the DHCP server
+sudo sed -i 's/INTERFACESv4=""/INTERFACESv4="eth0"/g' /etc/default/isc-dhcp-server
+sudo tee /etc/dhcp/dhcpd.conf > /dev/null <<EOT
+subnet 192.168.1.0 netmask 255.255.255.0 {
+  range 192.168.1.50 192.168.1.100;
+  option routers 192.168.1.1;
+  option subnet-mask 255.255.255.0;
+  option broadcast-address 192.168.1.255;
+  default-lease-time 600;
+  max-lease-time 7200;
+}
+EOT
+
+# Start the DHCP server
+sudo systemctl enable isc-dhcp-server
+sudo systemctl start isc-dhcp-server
+
+
 
 
 # if ping hostname matches static ip then ssh possible by hostname
@@ -68,7 +107,9 @@ echo "rsyslog installed and configured successfully"
 
 
 # enable rpi usb-otg modes 
-
+git clone https://github.com/JeremyEngram/RpiOTGModes.git /opt
+cd /opt/RpiOTGModes/ && chmod +x *
+ln -s /opt/RpiOTGModes/* /home/$USER/
 
 
 
@@ -118,7 +159,7 @@ apt install snap snapd && snap install riseup-vpn --classic || echo "snap was un
 
 
 # make original backups of all system conf files
-sudo find /etc -name '*.conf' -print0 | xargs -0 -I {} sh -c 'cp {} {}.bak'
+find /etc -name '*.conf' -print0 | xargs -0 -I {} sh -c 'cp {} {}.bak'
 
 
 
@@ -132,7 +173,8 @@ wget https://github.com/JeremyEngram/master-bash/blob/main/init.Mbashrc | bash
 chmod +x https://github.com/JeremyEngram/master-bash/blob/main/init.Mbashrc; rm -rf init.Mbashrc; echo 'removed init.Mbashrc implementation file...'
 
 
-sudo apt install python python2 python3 python3-pip openssh-server sshfs apt-clone
+# system packages install aftermarket packages
+sudo apt install plocate python python2 python3 python3-pip openssh-server sshfs apt-clone gcc build-essential 
 
 
  # Create log directories and custom logs
@@ -218,6 +260,11 @@ export PATH=$HOME/.local/share/bin/awesome:$PATH
 
 
 # IMPLEMENT AND USE AWESOME GIT SCRIPT PACKAGE MANAGER
+  #curl -s https://raw.githubusercontent.com/shinokada/awesome/main/install | bash -s install
+  #wget -qO - https://raw.githubusercontent.com/shinokada/awesome/main/install | bash -s install
+
+git clone https://github.com/shinokada/awesome.git /opt && cd /opt/awesome/ && bash awesome install 
+
 awesome -v && awesome update awesome
 
 # Installing a repo using user/repo
@@ -256,8 +303,7 @@ awesome install https://github.com/stormshadow07/HackTheWorld.git
 
 
  # Create symbolic links to /usr/local/bin/
-ln -s /opt/* /usr/local/bin/*
-ln -s /usr/local/bin/* /home/$USER/
+ln -s /opt/{*,} /usr/local/bin/ && ln -s /usr/local/bin/{*,} /home/$USER/
 
 
 
@@ -285,7 +331,7 @@ echo "Taking Full Ownership Of System Directories"
 chown $USER /opt /usr/local/bin /var/www/html
 
 
-Install Zeit and ubuntu-clean
+Install Zeit Ubuntu-Clean and Bleachbit
 add-apt-repository -y ppa:blaze/main
 add-apt-repository -y ppa:gerardpuig/ppa
 apt update
@@ -313,18 +359,16 @@ rm -rf /usr/local/bin/master_shell/
 git clone https://github.com/JeremyEngram/shelldump.git /tmp
 git clone https://github.com/JeremyEngram/shelldump2.git /tmp
 
-
-
 # Implementing temp install of researchlab settings
 git clone https://github.com/JeremyEngram/researchlab.git /tmp
 
 
+printf "WARNING: BE SURE TO CHECK YOUR /TMP DIRECTORY TO SEE IF YOU NEED ANY TEMPORARILY INSTALLED GIT SCRIPTS..."
+
 
 # Make all custom scripts executable
-echo "Arming All Custom Scripts For Use... ARMED!"
-chmod +x /usr/local/bin/*
-chmod +x /opt/*/*.sh/
-chmod +x /opt/*/*.py
+echo "Arming All Custom Scripts For Use... ARMED!" && chmod +x /usr/local/bin/* /opt/*/*.{sh,py}
+
 
 
 
