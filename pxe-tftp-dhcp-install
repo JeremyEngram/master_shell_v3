@@ -1,0 +1,94 @@
+#!/bin/bash
+
+# Function to for errors and exit if any are encountered
+check_error() {
+    if [ $? -ne 0 ]; then
+        echo "Error: $1"
+        exit 1
+    fi
+}
+
+# Function to install and configure the DHCP server
+install_configure_dhcp_server() {
+    # Install DHCP server
+    sudo apt-get update
+    sudo apt-get install -y isc-dhcp-server
+    check_error "Failed to install isc-dhcp-server"
+
+    # Configure DHCP server
+    # Edit the /etc/dhcp/dhcpd.conf file to add PXE-related information
+    # For example:
+    sudo sed -i '/^# option domain-name/s/^# //' /etc/dhcp/dhcpd.conf
+    sudo sed -i '/^ option domain-name-servers/s/^# //' /etc/dhcp/dhcpd.conf
+    sudo sed -i '/^# option subnet-mask/s/^# //' /etc/dhcp/dhcpd.conf
+    sudo sed -i '/^# option broadcast-address/s/^# //' /etc/dhcp/dhcpd.conf
+    sudo sed -i '/^# option routers/s/^# //' /etc/dhcp/dhcpd.conf
+    sudo sed -i '/^# option tftp-server-name/s/^# //' /etc/dhcp/dhcpd.conf
+    sudo sed -i '/^# filename/s/^# //' /etc/dhcp/dhcpd.conf
+
+    # Restart DHCP server
+    sudo systemctl restart isc-dhcp-server
+    check_error "Failed to restart isc-dhcp-server"
+}
+
+# Function to install and configure the TFTP server
+install_configure_tftp_server() {
+    # Install TFTP server
+    sudo apt-get update
+    sudo apt-get install -y tftpd-hpa
+    check_error "Failed to install tftpd-hpa"
+
+    # Configure TFTP server
+    # Edit the /etc/default/tftpd-hpa file to set TFTP_DIRECTORY to the appropriate directory
+    # For example:
+    sudo sed -i 's/^TFTP_DIRECTORY=.*/TFTP_DIRECTORY="\/var\/lib\/tftpboot"/' /etc/default/tftpd-hpa
+
+    # Restart TFTP server
+    sudo systemctl restart tftpd-hpa
+    check_error "Failed to restart tftpd-hpa"
+}
+
+# Function to prepare the boot files
+prepare_boot_files() {
+    # Obtain and configure the boot files
+    # Place the boot files (PXE bootloader, kernel, initrd, etc.) in the appropriate directory
+    # For example, create /var/lib/tftpboot directory and copy the files there
+    sudo mkdir -p /var/lib/tftpboot
+    # Copy the necessary boot files to /var/lib/tftpboot
+
+    # Set permissions for TFTP server
+    sudo chown -R nobody:nogroup /var/lib/tftpboot
+
+    # Restart TFTP server
+    sudo systemctl restart tftpd-hpa
+    check_error "Failed to restart tftpd-hpa after preparing boot files"
+}
+
+# Function to configure the DHCP server
+configure_dhcp_server() {
+    # Edit the /etc/dhcp/dhcpd.conf file to provide the appropriate PXE boot file and TFTP server location
+    # For example:
+    sudo sed -i 's/option tftp-server-name.*/option tftp-server-name "192.168.1.100";/' /etc/dhcp/dhcpd.conf
+    sed -i 's/filename "pxelinux.0";/filename "filename_of_pxe_boot_file";/' /etc/dhcp/dhcpd.conf
+
+    # Restart DHCP server
+    sudo systemctl restart isc-dhcp-server
+    check_error "Failed to restart isc-dhcp-server after configuring"
+}
+
+# Function to test the PXE boot
+test_pxe_boot() {
+    echo " Connect a client computer to the network and configure it to boot from the network (PXE)"
+    echo " Start the client computer and check if it receives an IP address from the DHCP server"
+    echo " Verify if the client fetches the necessary boot files from the TFTP server and initiates the network boot process"
+    echo " Monitor the logs on the DHCP and TFTP servers for any errors"
+}
+
+# Main script
+
+# Call the functions in the desired order
+install_configure_dhcp_server
+install_configure_tftp_server
+prepare_boot_files
+configure_dhcp_server
+test_pxe_boot
