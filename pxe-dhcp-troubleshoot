@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Function to check for errors and exit if any are encountered
+check_error() {
+    if [ $? -ne 0 ]; then
+        echo "Error: $1"
+        exit 1
+    fi
+}
+
+# Function to check the configuration file
+check_dhcpd_conf() {
+    # Check if the /etc/dhcp/dhcpd.conf file exists
+    if [ ! -f /etc/dhcp/dhcpd.conf ]; then
+        echo "Error: /etc/dhcp/dhcpd.conf file not found"
+        exit 1
+    fi
+
+    # Check if the PXE boot file and TFTP server location options are set correctly
+    if ! grep -q "option tftp-server-name" /etc/dhcp/dhcpd.conf || ! grep -q "filename" /etc/dhcp/dhcpd.conf; then
+        echo "Error: PXE boot file and TFTP server location options not set correctly in /etc/dhcp/dhcpd.conf"
+        exit 1
+    fi
+}
+
+# Function to check the logs for the DHCP server
+check_dhcpd_logs() {
+    # Check the logs for the DHCP server
+    if ! journalctl -u isc-dhcp-server | grep -q "Listening on LPF"; then
+        echo "Error: DHCP server failed to start"
+        exit 1
+    fi
+}
+
+# Function to check the status of the TFTP server
+check_tftpd_status() {
+    # Check the status of the TFTP server
+    if ! systemctl status tftpd-hpa | grep -q "Active: active (running)"; then
+        echo "Error: TFTP server not running"
+        exit 1
+    fi
+}
+
+# Function to check for conflicting services
+check_conflicting_services() {
+    # Check for conflicting services on port 67
+    if sudo netstat -tulpn | grep -q ":67"; then
+        echo "Error: Conflicting service running on port 67"
+        exit 1
+    fi
+}
+
+# Main script
+
+# Call the functions in the desired order
+check_dhcpd_conf
+check_dhcpd_logs
+check_tftpd_status
+check_conflicting_services
+
+echo "DHCP server is running correctly"
