@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Check syslog for the keyword "error"
+if grep -q "error" /var/log/sys; then
+    # Display a notification using Zenity
+    zenity --warning --text="An error has been found in syslog!"
+fi
