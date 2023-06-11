@@ -1,0 +1,21 @@
+import os
+
+# Define the program attributes
+desktop_icon = "/path/to/icon.png"
+alias_name = "program_alias"
+program_path = "/path/to/program"
+man_page = "/path/to/man/page"
+
+# Create the shell script
+with open("program.sh", "w") as f:
+    f.write("#!/bin/bash\n\n")
+    f.write("# Add desktop icon\n")
+    f.write(f"cp {desktop_icon} ~/Desktop/\n\n")
+    f.write("# Create alias symlink\n")
+    f.write(f"ln -s {program_path} /usr/local/bin/{alias_name}\n\n")
+    f.write("# Add help man page\n")
+    f.write(f"cp {man_page} /usr/share/man/man1/\n")
+    f.write(f"gzip /usr/share/man/man1/{os.path.basename(program_path)}.1\n")
+
+# Make the shell script executable
+os.chmod("program.sh", 0o755)
