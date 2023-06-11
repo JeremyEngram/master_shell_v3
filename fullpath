@@ -1,0 +1,5 @@
+import os def display_full_paths(directory): for root, dirs, files in os.walk(directory): 
+        for directory in dirs:
+            full_path = os.path.join(root, directory) print(f"[DIR] {full_path}")
+            
+        for file in files: full_path =

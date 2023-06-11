@@ -1,0 +1,15 @@
+#!/bin/bash
+
+
+  https://www.unixmen.com/shellinabox-a-web-based-ajax-terminal-emulator/
+  https://linux.die.net/man/1/shellinaboxd
+
+ cd /opt; git clone https://github.com/shellinabox/shellinabox.git && cd shellinabox && apt-get install git libssl-dev libpam0g-dev zlib1g-dev dh-autoreconf
+
+	autoreconf -i
+
+	./configure && make
+
+  dpkg-buildpackage -b
+
+    dpkg -i ../shellinabox_{ver}_{arch}.deb

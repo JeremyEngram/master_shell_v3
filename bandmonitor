@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Network interface to monitor (e.g., wlan0)
+INTERFACE="enp2s0"
+
+# Number of seconds to monitor
+MONITOR_DURATION=10
+
+# Function to calculate data usage
+calculate_data_usage() {
+    local device="$1"
+    local data="$2"
+    local previous_data="${data_usage[$device]}"
+
+    # Calculate the diffelocal diff=$(($data - $previous_data))rence in data usage
+    diff=$(echo "$data - $previous_data" | bc)
+    data_usage[$device]=$data
+
+    echo "$device: $diff bytes"
+}
+
+# Array to store previous data usage for each device
+declare -A data_usage
+
+# Start monitoring
+echo "Monitoring network traffic for $MONITOR_DURATION seconds..."
+
+# Use tcpdump to capture network traffic
+tcpdump -i $INTERFACE -l > /tmp/tcpdump.log &
+tcpdump_pid=$!
+
+# Sleep for the specified duration
+sleep $MONITOR_DURATION
+
+# Stop tcpdump
+kill $tcpdump_pid
+
+# Process the captured data
+awk -F'[ ,]' '{print $3,$NF}' /tmp/tcpdump.log |
+while read -r device size; do
+    if [[ $device != "IP" && $size =~ ^[0-9]+$ ]]; then
+        calculate_data_usage "$device" "$size"
+    fi
+done
+
+# Clean up temporary file
+rm /tmp/tcpdump.log
+

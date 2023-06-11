@@ -1,0 +1,22 @@
+import os import time def display_full_paths(): while True:
+        # Clear the console
+        os.system('cls' if os.name == 'nt' else 'clear')
+        
+        # Get the current directory
+        current_dir = os.getcwd()
+        
+        # Display the full paths of all files and directories in the current directory
+        print(f"Current Directory: {current_dir}\n")
+        
+        for root, dirs, files in os.walk(current_dir): for directory in dirs: full_path = 
+                os.path.join(root, directory) print(f"[DIR] {full_path}")
+                
+            for file in files: full_path = os.path.join(root, file) print(f"[FILE] 
+                {full_path}")
+        
+        # Wait for a few seconds before updating the display
+        time.sleep(5)
+# Start the background process
+display_full_paths()
+o
+

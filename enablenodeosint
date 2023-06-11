@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Script to enable, disable, and access a Node.js application with Apache
+
+# Configuration
+NODE_APP_NAME="your-node-app"           # Name of your Node.js application
+NODE_APP_PATH="/path/to/your/app"      # Path to your Node.js application directory
+NODE_APP_PORT="3000"                   # Port on which your Node.js application listens
+APACHE_CONF_PATH="/etc/apache2/sites-available"  # Path to Apache configuration files
+
+# Enable the Node.js application
+enable_node_app() {
+    # Create an Apache virtual host configuration file
+    cat << EOF > "${APACHE_CONF_PATH}/${NODE_APP_NAME}.conf"
+<VirtualHost *:80>
+    ServerName your-domain.com
+    DocumentRoot ${NODE_APP_PATH}
+
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:${NODE_APP_PORT}/
+    ProxyPassReverse / http://localhost:${NODE_APP_PORT}/
+</VirtualHost>
+EOF
+
+    # Enable the virtual host
+    sudo a2ensite "${NODE_APP_NAME}"
+    sudo systemctl reload apache2
+}
+
+# Disable the Node.js application
+disable_node_app() {
+    # Disable the virtual host
+    sudo a2dissite "${NODE_APP_NAME}"
+    sudo systemctl reload apache2
+
+    # Remove the virtual host configuration file
+    sudo rm "${APACHE_CONF_PATH}/${NODE_APP_NAME}.conf"
+}
+
+# Access the Node.js application
+access_node_app() {
+    # Open the browser to access the application
+    xdg-open "http://your-domain.com"
+}
+
+# Main script
+
+# Parse the command-line argument
+if [ "$1" == "enable" ]; then
+    enable_node_app
+elif [ "$1" == "disable" ]; then
+    disable_node_app
+elif [ "$1" == "access" ]; then
+    access_node_app
+else
+    echo "Usage: ./node_app_script.sh [enable|disable|access]"
+fi

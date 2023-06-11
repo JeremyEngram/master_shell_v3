@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Define backup destination directory
+backup_dir="/path/to/backup"
+
+# Create a timestamp for the backup directory
+timestamp=$(date +"%Y%m%d%H%M%S")
+backup_directory="${backup_dir}/backup_${timestamp}"
+
+# Create the backup directory
+mkdir -p "${backup_directory}"
+
+# Backup flat files and directories with high compression
+tar -czvf "${backup_directory}/flat_files.tar.gz" /path/to/flat_files
+
+# Backup configuration files ending with .conf
+find /etc -type f -name "*.conf" -exec cp {} "${backup_directory}" \;
+
+# Backup files and directories in /opt/
+tar -czvf "${backup_directory}/opt_backup.tar.gz" /opt/
+
+# Backup files and directories in /usr/local/bin/
+tar -czvf "${backup_directory}/usr_local_bin_backup.tar.gz" /usr/local/bin/
+
+# Backup bash history if /var/log/commands.log exists and is not empty
+commands_log="/var/log/commands.log"
+if [[ -f "${commands_log}" && -s "${commands_log}" ]]; then
+    cp "${commands_log}" "${backup_directory}/commands.log"
+fi
+
+# Backup bash-related configuration files
+cp /etc/bash.bashrc "${backup_directory}/bash.bashrc"
+cp /etc/profile "${backup_directory}/profile"
+cp /etc/skel/.bashrc "${backup_directory}/skel_bashrc"
+cp /etc/skel/.bash_profile "${backup_directory}/skel_bash_profile"
+cp /etc/skel/.bash_aliases "${backup_directory}/skel_bash_aliases"
+cp /etc/skel/.bash_functions "${backup_directory}/skel_bash_functions"
+
+# Check if apt-clone is installed
+if ! command -v apt-clone &> /dev/null; then
+    echo "apt-clone not found. Installing..."
+    sudo apt-get install apt-clone -y
+fi
+
+# Backup currently installed and properly configured apps using apt-clone
+apt-clone clone "${backup_directory}/apt-clone"
+
+echo "Backup completed successfully."

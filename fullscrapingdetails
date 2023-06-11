@@ -1,0 +1,17 @@
+Make documentation first from 
+wording content descriptions and 
+produce tools from code and 
+instructions given. Implement into 
+osint framework. 
+https://docs.scrapy.org/en/latest/topics/broad-crawls.html 
+https://axiom.ai/recipes/web-scraping-in-batches.html 
+https://github.com/temporalio/temporal-url-batch-scraping 
+https://stackoverflow.com/questions/19098315/httrack-wget-curl-scrape-fetch 
+https://github.com/topics/blackhat-python 
+https://stackoverflow.com/questions/19098315/httrack-wget-curl-scrape-fetch 
+https://www.geeksforgeeks.org/automated-website-scraping-using-scrapy/amp/ 
+https://www.pluralsight.com/guides/advanced-web-scraping-tactics-python-playbook 
+https://dev.to/epam_india_python/advanced-web-scraping-using-python-scrapy-and-splash-972#:~:text=Scrapy%20is%20a%20free%20and,can%20make%20multiple%20requests%20parallelly. 
+https://www.geeksforgeeks.org/gathetool-information-gathering-tool/amp/ 
+https://github.com/2c0mrade9/Python-Information-Gathering-Tool 
+https://www.r-bloggers.com/2016/10/simple-automated-web-scraping-with-r-cmd-batch-and-task-scheduler/amp/
