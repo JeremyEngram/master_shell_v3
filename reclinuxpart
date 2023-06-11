@@ -1,0 +1,15 @@
+
+
+sudo extundelete /dev/sdXN --restore-all
+
+extundelete /dev/sdXN --restore-file path/to/file
+
+extundelete /dev/sdXN --restore-directory path/to/directory
+
+extundelete /dev/sdXN --restore-all --after 1577840400
+
+
+
+make user friendly with select menu and read command. recovers linux only.
+
+

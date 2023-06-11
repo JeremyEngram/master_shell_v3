@@ -1,0 +1,34 @@
+#!/bin/bash
+
+echo "ENTER FULL REMOTE READ WRITE ACCESS"; echo 
+
+# Prompt the user to enter the share path
+read -p "Enter the share path (e.g., //server/share): " share_path
+
+# Prompt the user to enter the username of the remote user
+read -p "Enter the username of the remote user: " username
+
+# Prompt the user to enter the password of the remote user
+read -s -p "Enter the password of the remote user: " password
+echo
+
+# Set the fully qualified share path
+share_path=$(echo "$share_path" | sed 's#//*#/#')
+
+# Set the ACL command
+acl_command="smbcacls $share_path -U $username%$password"
+
+# Set the new ACL configuration for full read-write access
+acl_config="[GROUP_NAME]
+    Full Control:NTFS/FILE"
+    
+# Execute the ACL command to set the new ACL configuration
+echo "$acl_config" | $acl_command
+
+# Check the exit status of the smbcacls command
+if [ $? -eq 0 ]; then
+    echo "Successfully updated the share ACL to provide full read-write access."
+else
+    echo "Failed to update the share ACL."
+fi
+
