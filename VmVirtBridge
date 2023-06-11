@@ -1,0 +1,34 @@
+
+#!/bin/bash
+
+# Define variables
+ISO_PATH="/path/to/ubuntu.iso"
+VM_NAME="ubuntu-vm"
+VM_MEMORY="2048"
+VM_VCPUS="2"
+VM_DISK_SIZE="20"
+VM_NETWORK="bridge=br0"
+VM_GRAPHICS="spice"
+VM_LOCATION="/var/lib/libvirt/images/${VM_NAME}.qcow2"
+
+# Download Ubuntu ISO if it doesn't exist
+if [ ! -f "$ISO_PATH" ]; then
+  wget "http://releases.ubuntu.com/20.04/ubuntu-20.04.2.0-desktop-amd64.iso" -O "$ISO_PATH"
+fi
+
+# Create virtual machine
+virt-install \
+  --name "$VM_NAME" \
+  --memory "$VM_MEMORY" \
+  --vcpus "$VM_VCPUS" \
+  --disk path="$VM_LOCATION",size="$VM_DISK_SIZE" \
+  --network "$VM_NETWORK" \
+  --graphics "$VM_GRAPHICS" \
+  --cdrom "$ISO_PATH" \
+  --os-type linux \
+  --os-variant ubuntu20.04 \
+  --virt-type kvm \
+  --import
+
+# Start virtual machine
+virsh start "$VM_NAME"
