@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# starting framework for Linux preventative maintenance system using SQL database and logs for predictive analysis
+
+# Connect to MySQL
+mysql -h localhost -u [username] -p[password] linux_predict <<EOF
+
+-- Collect data from various sources at specified intervals
+SELECT * FROM `cpu` WHERE ROWID = 'x';
+INSERT INTO `memory` VALUES ('2023-03-01', '79%');
+INSERT INTO `disk` VALUES ('2023-03-01', '87%');
+
+-- Update timestamp for last check
+UPDATE `lastcheck` SET `timestamp`='NOW()' WHERE `name`='linux_predict';
+
+EOF
