@@ -1,0 +1,105 @@
+#!/bin/bash
+
+#######################
+#  cleaner.sh
+#  by ChatGPT
+#
+#  version 1.0.1
+#######################
+
+# Default configuration
+SEARCH_STRING='*'
+MIN_FILES=5
+DAYS=90
+DIR='.'
+QUIET=false
+DRY_RUN=false
+
+# Cleaner usage function
+usage() {
+    cat << EOF
+cleaner.sh
+This script cleans directories and manages disk space by deleting older files.
+USAGE:  cleaner.sh [options]
+OPTIONS:
+   -h      Show this message
+   -q      Quiet mode, suppress output messages
+   -s      A search string to limit file deletion, defaults to '*'
+   -m      The minimum number of files required in the directory (Files to be maintained), defaults to 5
+   -d      The directory to clean, defaults to the current directory
+   -D      Specify the number of days of logs to retain, defaults to 90
+   -n      Dry run mode, preview actions without performing actual cleanup
+EXAMPLES:
+   Delete everything but the 5 most recently touched files in the current directory:
+     cleaner.sh
+   Delete all files including text "test", except the most recent, in /home/myUser directory:
+     cleaner.sh -s test -m 1 -d /home/myUser
+   Delete logs older than 30 days in /var/log directory (dry-run mode):
+     cleaner.sh -d /var/log -D 30 -n
+EOF
+}
+
+# Log cleanup function
+delete_files() {
+    # ... (same as before)
+}
+
+# Disk cleanup function
+cleanup_disk() {
+    # ... (same as before)
+}
+
+# Handle command-line arguments
+while getopts  ":s:m:d:D:nqh" flag; do
+    case "$flag" in
+        h)
+            usage
+            exit 0
+            ;;
+        q)
+            QUIET=true
+            ;;  
+        s)
+            SEARCH_STRING=$OPTARG
+            ;;
+        m)
+            MIN_FILES=$OPTARG
+            ;;
+        d)
+            DIR=$OPTARG
+            ;;
+        D)
+            DAYS=$OPTARG
+            ;;
+        n)
+            DRY_RUN=true
+            ;;
+        ?)
+            usage
+            exit 1
+    esac
+done
+
+# Check if the directory exists
+if [ ! -d "$DIR" ]; then
+    echo "Error: Directory '$DIR' does not exist."
+    exit 1
+fi
+
+# Check if the directory is writable
+if [ ! -w "$DIR" ]; then
+    echo "Error: Directory '$DIR' is not writable."
+    exit 1
+fi
+
+# Perform log cleanup and disk cleanup
+if [ "$QUIET" = false ]; then
+    echo "Executing log cleanup..."
+fi
+DELETED=0
+delete_files
+
+disk=$(df -H "$DIR" | awk 'NR==2 {print $5}' | sed 's/%//')
+cleanup_disk
+
+exit 0

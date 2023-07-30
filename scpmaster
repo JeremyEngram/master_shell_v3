@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Prompt the user for the source file path and filename
+read -p "Enter the path and filename of the source file: " SOURCE_FILE
+
+# Prompt the user for the destination server address and directory path
+read -p "Enter the destination server address: " DESTINATION_SERVER
+read -p "Enter the destination directory path: " DESTINATION_DIRECTORY
+
+# Prompt the user for the destination server username
+read -p "Enter the destination server username: " DESTINATION_USERNAME
+
+# Use scp to copy the file to the destination server
+scp $SOURCE_FILE $DESTINATION_USERNAME@$DESTINATION_SERVER:$DESTINATION_DIRECTORY

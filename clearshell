@@ -1,0 +1,4 @@
+#!/bin/bash
+
+bash /bin/clear && /usr/bin/clear
+export PATH="/bin:/usr/bin:$PATH"

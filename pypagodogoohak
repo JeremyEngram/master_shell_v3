@@ -1,0 +1,1 @@
+python3 pagodo.py -d example.com -g dorks.txt -l 50 -s -e 35.0 -j 1.1
