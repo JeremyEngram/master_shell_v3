@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo "Burpsuite Scripts"
+
+git clone https://github.com/DynamicDesignz/community-scripts.git
+echo burp
+git clone https://github.com/DynamicDesignz/AuthMatrix.git
+echo payloads
+https://github.com/DynamicDesignz/payloads.git
+echo burp intruder payloads 
+git clone https://github.com/DynamicDesignz/IntruderPayloads.git
+git clone https://github.com/DynamicDesignz/BurpSuiteLoggerPlusPlus.git
+
+wget https://raw.githubusercontent.com/pwnieexpress/pwn_plug_sources/master/src/darkmysqli/DarkMySQLi.py

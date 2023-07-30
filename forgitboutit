@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#for each git url in list do git clone
+#while read url; do git clone "$url"; done < giturls.txt
+
+
+#for each dir with require* run install
+for dir in /opt/*/; do
+    cd "$dir"
+    if [ -f "requirements.txt" ]; then
+        pip3 install -r requirements.txt
+    fi
+done
+
+
+# for every install.sh in directories do bash install 
+for dir in /opt/*/; do
+  # Check if an install.sh script exists in the current directory
+  if [[ -f "${dir}install.sh" ]]; then
+    # Change into the current directory and run the install.sh script
+    cd "$dir" && bash install.sh
+  fi
+done

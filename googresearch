@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Ask the user for the query to search
+read -p "Enter a query to search: " query
+
+# Scrape the search results page for the query using curl and grep
+url="https://www.google.com/search?q=${query}"
+html=$(curl -s "${url}")
+links=$(echo "${html}" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | grep -v 'google' | uniq)
+
+# Create a summary of the collected URLs
+summary="Google Search Results for: ${query}\n\n"
+summary+="===================================\n\n"
+
+i=1
+for link in ${links}; do
+    summary+="(${i}) ${link}\n"
+    i=$((i+1))
+done
+
+# Save the summary to a text file
+echo -e "${summary}" > search_results.txt
+
+# Export the summary to a PDF file
+enscript -B -o - search_results.txt | ps2pdf - search_results.pdf
+
+# Remove the temporary text file
+rm search_results.txt
+
+echo "Search results exported to search_results.pdf."
