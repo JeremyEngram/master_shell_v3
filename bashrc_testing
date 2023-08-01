@@ -1,0 +1,313 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+#shopt -s globstar
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
+fi
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# bash aliases master file for ssh connectors
+if [ -f ~/.bash_connectors ]; then
+    . ~/.bash_connectors
+fi
+
+# bash functions master file
+if [ -f ~/.bash_functions ]; then
+    . ~/.bash_functions
+fi
+
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+############################################################################################################# END DEFAULT BASHRC FILE
+
+export PATH="/opt/csitools:/opt/csitools/helper:$HOME/bin:$HOME/.local/bin:/usr/sbin:/opt/jdk-17/bin/:$PATH"
+
+export JAVA_HOME=/usr/lib/jvm/bellsoft-java8-full-amd64
+
+export PATH=$PATH:/usr/local/bin/omnisint
+export PATH=$PATH:/usr/local/bin/omnisint/standalone
+export PATH=$PATH:/usr/local/bin/omnisint/py
+export PATH=$PATH:/usr/local/bin/omnisint/sh
+export PATH=$PATH:/usr/local/bin/standalone
+
+export PATH=$PATH:/home/$user/bin
+export PATH=$PATH:/home/$user/scripts
+
+export PATH=$PATH:~/.local/bin
+export PATH=$PATH:/var/www/html/scripts
+export PATH=$PATH:/opt
+
+
+# SYSTEM COMMANDS LOGGING EXECUTION
+whoami="\$(whoami)@\$(echo \$SSH_CONNECTION | awk '{print \$1}')"
+export PROMPT_COMMAND='RETRN_VAL=\$?;logger -p local6.debug "\$whoami [$$] \$(history 1 | sed "s/^[ ]*[0-9]\+[ ]*//" )"'
+
+
+############################################################
+
+source ~/.autoenv/activate.sh
+
+alias arm='sudo chmod +x'
+
+alias url2pdf='wkhtmltopdf'
+alias pdf2txt=''
+
+alias implement='sudo apt install -y'
+alias dropoff='sudo apt remove -y'
+
+alias search='sudo apt-cache search'
+alias show='sudo apt-cache show'
+
+################################################# START FORENSICS ALIASES
+#alias binwalker='binwalk $(echo filename*.bin:>) '
+#alias scalpel='scalpel -c /etc/scalpel.conf -o $1 $(echo disk_image.img:>) '
+#alias foremost='foremost -o $1 $(echo disk_image.img) '
+
+alias visualize='$(read -p echo "URL:> " URL) xdg-open http://csi.lan:5000/graph?url=$URL'
+################################################# END FORENSICS ALIASES
+
+
+################################################# START BASIC SYSTEM ALIASES
+alias displayservices='sudo service --status-all'
+
+alias diskuagewarning='disk_usage_warning'
+
+#alias backupomnisint='zip -r omnisint.zip /var/www/html'
+
+alias differentialbackup='sudo bash /usr/local/bin/standalone/differential-backup.sh'
+alias incrementalbackup='sudo rsync -av --link-dest=<previous_backup_directory> /var/www/html /media/csi/failover'
+alias filelevelbackup='sudo rsync -av --delete /var/www/html/ /media/csi/failover/filelevelbackup'
+
+alias diskimage='sudo dd if=/dev/sda of=/media/csi/failover/omnisint.iso bs=4M status=progress'
+
+############################################################################## START SSH CONNECTORS ALIASES
+alias masterserver='ssh jeremy@masterserver'
+alias masterservercmd='ssh jeremy@masterserver -t'
+alias sshfsmasterserver='sshfs jeremy@masterserver:/ /home/csi/Masterserver'
+############################################################################## END SSH CONNECTORS ALIASES
+
+#alias remotediskimage='remotediskimage.sh /dev/sda masterserver /home/jeremy/omnisint-remote-disk-image.iso'
+#alias sshfsdiskimage='sshfs-remote-diskimage.sh /dev/sda /media/csi/remote remote-server:/home/jeremy/omnisint-remote-disk-image.iso'
+#alias sshfsdiskimage2='sshfs-remote-diskimage2.sh /dev/sda /media/csi/remote remote-server:/home/jeremy/omnisint-remote-disk-image.iso'
+
+alias reloadfstabpartitions='sudo systemctl daemon-reload'
+#alias createsystemdservice=''
+
+###################################################################################################### START CRUCIAL BASHRC FUNCTIONS
+
+function disk_usage_warning() {
+    local THRESHOLD=90  # Set the disk space utilization threshold in percentage
+
+    local UTILIZATION=$(df -h --output=pcent / | awk 'NR==2 {print substr($1, 1, length($1)-1)}')
+
+    if [ "$UTILIZATION" -ge "$THRESHOLD" ]; then
+        echo "Warning: Disk space utilization is $UTILIZATION%."
+    fi
+
+    unset -f disk_usage_warning  # Unset the function to prevent it from running again
+}
+
+
+function takeowership() {
+  if [ -z "$1" ]; then
+    echo "Please provide a directory path."
+    return 1
+  fi
+
+  if [ ! -d "$1" ]; then
+    echo "The provided path is not a directory."
+    return 1
+  fi
+
+  sudo chown -R csi:csi "$1"
+  sudo chmod 775 "$1"
+}
+
+
+function addtolinestart {
+  if [ $# -ne 2 ]; then
+    echo "Usage: addtolinestart 'line' file"
+    return 1
+  fi
+
+  line="$1"
+  file="$2"
+
+  # Insert line at start of each line
+  sed -i "s/^/$line /" "$file" 
+}
+
+function createsystemservice {
+
+}
+
+######################################################################## END BASHRC FUNCTIONS
+alias LICENSE="/usr/local/bin/LICENSE"
+alias README.md="/usr/local/bin/README.md"
+alias addpyshebangtopy="/usr/local/bin/addpyshebangtopy.sh"
+alias apache2delmon="/usr/local/bin/apache2delmon"
+alias apache2filemon="/usr/local/bin/apache2filemon"
+alias autonse="/usr/local/bin/autonse.sh"
+alias bleachbitback="/usr/local/bin/bleachbitback"
+alias create-react-app="/usr/local/bin/create-react-app"
+alias docker-compose="/usr/local/bin/docker-compose"
+alias filebrowser="/usr/local/bin/filebrowser"
+alias filebrowser2="/usr/local/bin/filebrowser2"
+alias findmenu="/usr/local/bin/findmenu"
+alias goohak="/usr/local/bin/goohak"
+alias gtkregcompare.pl="/usr/local/bin/gtkregcompare.pl"
+alias gtkregscope.pl="/usr/local/bin/gtkregscope.pl"
+alias gtkregview.pl="/usr/local/bin/gtkregview.pl"
+alias html2pdf="/usr/local/bin/html2pdf"
+alias increment="/usr/local/bin/increment.sh"
+alias lazydocker="/usr/local/bin/lazydocker"
+alias ngrok="/usr/local/bin/ngrok"
+alias notes="/usr/local/bin/notes"
+alias omisystemx11.py="/usr/local/bin/omisystemx11.py"
+alias omnisystem.py="/usr/local/bin/omnisystem.py"
+alias onionsearch="/usr/local/bin/onionsearch"
+alias pip="/usr/local/bin/pip"
+alias pip3="/usr/local/bin/pip3"
+alias pip3.11="/usr/local/bin/pip3.11"
+alias pup="/usr/local/bin/pup"
+alias pyngrok="/usr/local/bin/pyngrok"
+alias pyserial-miniterm="/usr/local/bin/pyserial-miniterm"
+alias pyserial-ports="/usr/local/bin/pyserial-ports"
+alias recondog="/usr/local/bin/recondog"
+alias regclassnames.pl="/usr/local/bin/regclassnames.pl"
+alias regdiff.pl="/usr/local/bin/regdiff.pl"
+alias regdump.pl="/usr/local/bin/regdump.pl"
+alias regexport.pl="/usr/local/bin/regexport.pl"
+alias regfind.pl="/usr/local/bin/regfind.pl"
+alias regml.pl="/usr/local/bin/regml.pl"
+alias regmultidiff.pl="/usr/local/bin/regmultidiff.pl"
+alias regscan.pl="/usr/local/bin/regscan.pl"
+alias regsecurity.pl="/usr/local/bin/regsecurity.pl"
+alias regshell.pl="/usr/local/bin/regshell.pl"
+alias regstats.pl="/usr/local/bin/regstats.pl"
+alias regtimeline.pl="/usr/local/bin/regtimeline.pl"
+alias regtree.pl="/usr/local/bin/regtree.pl"
+alias sandmap="/usr/local/bin/sandmap"
+alias scpmaster="/usr/local/bin/scpmaster"
+alias stealthispii-gui.py="/usr/local/bin/stealthispii-gui.py"
+alias stormbreaker="/usr/local/bin/stormbreaker"
+alias tabulate="/usr/local/bin/tabulate"
+alias tqdm="/usr/local/bin/tqdm"
+alias wxbatch="/usr/local/bin/wxbatch"
+alias wxmap="/usr/local/bin/wxmap"
+alias wxproj="/usr/local/bin/wxproj"
+alias wxrec="/usr/local/bin/wxrec"
+alias wxregcompare.pl="/usr/local/bin/wxregcompare.pl"
+alias wxregscope.pl="/usr/local/bin/wxregscope.pl"
+alias wxregview.pl="/usr/local/bin/wxregview.pl"
+alias wxtoimg="/usr/local/bin/wxtoimg"
+alias xwxtoimg="/usr/local/bin/xwxtoimg"
