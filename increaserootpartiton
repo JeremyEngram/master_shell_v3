@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Function to check if the script is executed with root privileges
+check_root_privileges() {
+    if [[ $EUID -ne 0 ]]; then
+        echo "This script must be run with root privileges. Exiting..."
+        exit 1
+    fi
+}
+
+# Function to increase the root partition
+increase_root_partition() {
+    # Verify if root partition is mounted read-only
+    if mount | grep "on / type ext4 (ro" > /dev/null; then
+        echo "The root partition is mounted read-only. Cannot proceed with resizing."
+        exit 1
+    fi
+
+    # Unmount the root partition
+    umount /
+
+    # Run filesystem check (optional)
+    # e.g., fsck -f /dev/sda1
+
+    # Resize the root partition (assumes /dev/sda1 as root partition)
+    resize2fs /dev/sda1
+
+    # Mount the root partition back
+    mount /dev/sda1 /
+
+    echo "Root partition size increased successfully."
+}
+
+# Main script
+check_root_privileges
+
+# Prompt user for confirmation
+read -p "Warning: This operation will resize the root partition. Do you want to continue? (y/n): " choice
+
+if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
+    increase_root_partition
+else
+    echo "Operation canceled."
+fi
+

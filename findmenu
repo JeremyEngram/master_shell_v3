@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# Function to find files or directories
+find_files_or_dirs() {
+    echo "1. Find files by extension"
+    echo "2. Find files matching multiple path/name patterns"
+    echo "3. Find directories matching a given name (case-insensitive)"
+    echo "4. Find files matching a given pattern, excluding specific paths"
+    echo "5. Find files matching a given size range, limiting the recursive depth"
+    echo "6. Run a command for each file"
+    echo "7. Find files modified in the last 7 days"
+    echo "8. Find empty (0 byte) files and delete them"
+    echo "9. Exit"
+
+    read -p "Enter your choice (1-9): " choice
+
+    case $choice in
+        1)
+            read -p "Enter the root path: " root_path
+            read -p "Enter the extension to find: " ext
+            find "$root_path" -name "*.$ext"
+            ;;
+        2)
+            read -p "Enter the root path: " root_path
+            read -p "Enter the first path pattern: " path_pattern1
+            read -p "Enter the second path pattern: " path_pattern2
+            read -p "Enter the file name pattern: " file_pattern
+            find "$root_path" -path "$path_pattern1" -or -path "$path_pattern2" -name "*$file_pattern*"
+            ;;
+        3)
+            read -p "Enter the root path: " root_path
+            read -p "Enter the directory name to find (case-insensitive): " dir_name
+            find "$root_path" -type d -iname "*$dir_name*"
+            ;;
+        4)
+            read -p "Enter the root path: " root_path
+            read -p "Enter the file name pattern to find: " file_pattern
+            read -p "Enter the path to exclude: " exclude_path
+            find "$root_path" -name "*$file_pattern*" -not -path "$exclude_path"
+            ;;
+        5)
+            read -p "Enter the root path: " root_path
+            read -p "Enter the minimum size (e.g., 500k): " min_size
+            read -p "Enter the maximum size (e.g., 10M): " max_size
+            find "$root_path" -maxdepth 1 -size "+$min_size" -size "-$max_size"
+            ;;
+        6)
+            read -p "Enter the root path: " root_path
+            read -p "Enter the command to execute (use {} to access the filename): " command
+            find "$root_path" -name "*.ext" -exec $command \;
+            ;;
+        7)
+            read -p "Enter the root path: " root_path
+            find "$root_path" -daystart -mtime -7
+            ;;
+        8)
+            read -p "Enter the root path: " root_path
+            find "$root_path" -type f -empty -delete
+            ;;
+        9)
+            echo "Exiting..."
+            exit 0
+            ;;
+        *)
+            echo "Invalid choice. Please try again."
+            ;;
+    esac
+}
+
+# Main loop for the script
+while true; do
+    echo "==== Find Files or Directories ===="
+    find_files_or_dirs
+done

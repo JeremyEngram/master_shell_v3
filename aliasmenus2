@@ -1,0 +1,132 @@
+#!/bin/bash
+
+# Associative array to store aliases
+declare -A aliases=(
+    ["addpyshebangtopy"]="/usr/local/bin/addpyshebangtopy.sh"
+    ["apache2delmon"]="/usr/local/bin/apache2delmon"
+    ["apache2filemon"]="/usr/local/bin/apache2filemon"
+    ["arm"]="sudo chmod +x"
+    ["autonse"]="/usr/local/bin/autonse.sh"
+    ["bleachbitback"]="/usr/local/bin/bleachbitback"
+    ["blowoff"]="sudo apt autoremove && sudo apt clean && sudo bleachbitback"
+    ["create-react-app"]="/usr/local/bin/create-react-app"
+    ["differentialbackup"]="sudo bash /usr/local/bin/standalone/differential-backup.sh"
+    ["diskimage"]="sudo dd if=/dev/sda of=/media/csi/failover/omnisint.iso bs=4M status=progress"
+    ["diskuagewarning"]="disk_usage_warning"
+    ["displayservices"]="sudo service --status-all"
+    ["docker-compose"]="/usr/local/bin/docker-compose"
+    ["dropoff"]="sudo apt remove -y"
+    ["egrep"]="egrep --color=auto"
+    ["fgrep"]="fgrep --color=auto"
+    ["filebrowser"]="/usr/local/bin/filebrowser"
+    ["filebrowser2"]="/usr/local/bin/filebrowser2"
+    ["filelevelbackup"]="sudo rsync -av --delete /var/www/html/ /media/csi/failover/filelevelbackup"
+    ["findmenu"]="/usr/local/bin/findmenu"
+    ["goohak"]="/usr/local/bin/goohak"
+    ["grep"]="grep --color=auto"
+    ["gtkregcompare.pl"]="/usr/local/bin/gtkregcompare.pl"
+    ["gtkregscope.pl"]="/usr/local/bin/gtkregscope.pl"
+    ["gtkregview.pl"]="/usr/local/bin/gtkregview.pl"
+    ["html2pdf"]="/usr/local/bin/html2pdf"
+    ["implement"]="sudo apt install -y"
+    ["increment"]="/usr/local/bin/increment.sh"
+    ["incrementalbackup"]="sudo rsync -av --link-dest=<previous_backup_directory> /var/www/html /media/csi/failover"
+    ["l"]="ls -CF"
+    ["la"]="ls -A"
+    ["lazydocker"]="/usr/local/bin/lazydocker"
+    ["ll"]="ls -alF"
+    ["ls"]="ls --color=auto"
+    ["masterserver"]="ssh jeremy@masterserver"
+    ["masterservercmd"]="ssh jeremy@masterserver -t"
+    ["mobilerecon"]="ssh -X jeremy@dc1.lan"
+    ["ngrok"]="/usr/local/bin/ngrok"
+    ["nmapme"]="sudo nmap -sS localhost"
+    ["notes"]="/usr/local/bin/notes"
+    ["omisystemx11.py"]="/usr/local/bin/omisystemx11.py"
+    ["omniscient"]="ssh -X csi@csi.lan"
+    ["omnisystem.py"]="/usr/local/bin/omnisystem.py"
+    ["onionsearch"]="/usr/local/bin/onionsearch"
+    ["osmenus"]="echo 'Omniscient Menus'; cd /usr/local/bin/omnisint/menus;"
+    ["pdf2txt"]=""
+    ["pip"]="/usr/local/bin/pip"
+    ["pip3"]="/usr/local/bin/pip3"
+    ["pip3.11"]="/usr/local/bin/pip3.11"
+    ["pup"]="/usr/local/bin/pup"
+    ["pyngrok"]="/usr/local/bin/pyngrok"
+    ["pyserial-miniterm"]="/usr/local/bin/pyserial-miniterm"
+    ["pyserial-ports"]="/usr/local/bin/pyserial-ports"
+    ["recondog"]="/usr/local/bin/recondog"
+    ["regclassnames.pl"]="/usr/local/bin/regclassnames.pl"
+    ["regdiff.pl"]="/usr/local/bin/regdiff.pl"
+    ["regdump.pl"]="/usr/local/bin/regdump.pl"
+    ["regexport.pl"]="/usr/local/bin/regexport.pl"
+    ["regfind.pl"]="/usr/local/bin/regfind.pl"
+    ["regml.pl"]="/usr/local/bin/regml.pl"
+    ["regmultidiff.pl"]="/usr/local/bin/regmultidiff.pl"
+    ["regscan.pl"]="/usr/local/bin/regscan.pl"
+    ["regsecurity.pl"]="/usr/local/bin/regsecurity.pl"
+    ["regshell.pl"]="/usr/local/bin/regshell.pl"
+    ["regstats.pl"]="/usr/local/bin/regstats.pl"
+    ["regtimeline.pl"]="/usr/local/bin/regtimeline.pl"
+    ["regtree.pl"]="/usr/local/bin/regtree.pl"
+    ["reloadfstabpartitions"]="sudo systemctl daemon-reload"
+    ["sandmap"]="/usr/local/bin/sandmap"
+    ["scpmaster"]="/usr/local/bin/scpmaster"
+    ["search"]="sudo apt-cache search"
+    ["show"]="sudo apt-cache show"
+    ["sshfscsi"]="sshfs csi@csi:/home/csi/ ~/CSI"
+    ["sshfsdc1"]="sshfs jeremy@datacenter:/ ~/Pi"
+    ["sshfsmasterserver"]="sshfs jeremy@masterserver:/ /home/csi/Masterserver"
+    ["stealthispii-gui.py"]="/usr/local/bin/stealthispii-gui.py"
+    ["stormbreaker"]="/usr/local/bin/stormbreaker"
+    ["tabulate"]="/usr/local/bin/tabulate"
+    ["touchsmart"]="ssh -X owner@touchsmart.lan"
+    ["tqdm"]="/usr/local/bin/tqdm"
+    ["truncatelogs"]="sudo truncate -s 0 /var/log/syslog"
+    ["update"]="sudo apt update && sudo apt upgrade && sudo apt autoremove"
+    ["url2pdf"]="wkhtmltopdf"
+    ["visualize"]="$(read -p echo 'URL:> ' URL) xdg-open http://csi.lan:5000/graph?url=$URL"
+    ["wxbatch"]="/usr/local/bin/wxbatch"
+    ["wxmap"]="/usr/local/bin/wxmap"
+    ["wxproj"]="/usr/local/bin/wxproj"
+    ["wxrec"]="/usr/local/bin/wxrec"
+    ["wxregcompare.pl"]="/usr/local/bin/wxregcompare.pl"
+    ["wxregscope.pl"]="/usr/local/bin/wxregscope.pl"
+    ["wxregview.pl"]="/usr/local/bin/wxregview.pl"
+    ["wxtoimg"]="/usr/local/bin/wxtoimg"
+    ["xwxtoimg"]="/usr/local/bin/xwxtoimg"
+)
+
+# Function to display the menu
+display_menu() {
+    echo "===== Alias Menu ====="
+    for alias_name in "${!aliases[@]}"; do
+        echo "$alias_name"
+    done
+    echo "0. Exit"
+    echo "======================"
+    echo "Enter your choice:"
+}
+
+# Function to execute the selected alias
+execute_alias() {
+    alias_name=$1
+    command=${aliases[$alias_name]}
+    if [ -n "$command" ]; then
+        echo "Executing $alias_name: $command"
+        eval "$command"
+    else
+        echo "Invalid choice. Please try again."
+    fi
+    echo
+}
+
+# Main script
+while true; do
+    display_menu
+    read choice
+    if [ "$choice" == "0" ]; then
+        break
+    fi
+    execute_alias "$choice"
+done

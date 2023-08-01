@@ -1,0 +1,4 @@
+─$ locate syslog.d/bash.conf
+/etc/rsyslog.d/bash.conf
+
+

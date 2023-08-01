@@ -1,0 +1,16 @@
+xdg-open https://www.kitploit.com/2019/07/buster-find-emails-of-person-and-return.html
+
+echo "Buster is a simple OSINT tool used to:
+Get social accounts from various sources(gravatar,about.me,myspace,skype,github,linkedin,avast)
+Get links to where the email was found using google,twitter,darksearch and paste sites
+Get domains registered with an email (reverse whois)
+Generate possible emails and usernames of a person
+Find the email of a social media account
+Find emails from a username
+Find the work email of a person using hunter.io"
+
+git clone git://github.com/sham00n/buster /opt
+
+$ cd buster/
+$ python3 setup.py install
+$ buster -h
