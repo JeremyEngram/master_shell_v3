@@ -1,0 +1,4 @@
+#!/bin/bash
+
+read -p "URL:> " url
+curl -s "$url" | sed -E -n 's/([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/\1/p' | tee -a links.log
