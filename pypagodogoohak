@@ -1,1 +1,23 @@
-python3 pagodo.py -d example.com -g dorks.txt -l 50 -s -e 35.0 -j 1.1
+### python3 pagodo.py -d example.com -g dorks.txt -l 50 -s -e 35.0 -j 1.1
+
+
+#!/bin/bash
+
+# Check if required arguments are provided
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <domain>"
+    exit 1
+fi
+
+# Assign the first argument to the domain variable
+domain=$1
+
+# Define other parameters
+dorks_file="dorks.txt"
+limit=50
+safe_search="-s"
+engine_version="35.0"
+json_output="1.1"
+
+# Execute the pagodo.py script with the provided arguments
+python3 pagodo.py -d "$domain" -g "$dorks_file" -l "$limit" $safe_search -e "$engine_version" -j "$json_output"
