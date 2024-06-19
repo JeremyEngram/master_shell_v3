@@ -1,54 +1,77 @@
 #!/bin/bash
 
-# Check if the script is run with root privileges
-if [ "$EUID" -ne 0 ]; then
-  echo "Please run this script as root (use sudo)."
-  exit 1
-fi
+# Function to prompt user for launching the testbed VM
+launch_testbed_vm() {
+  while true; do
+    read -p "Do you want to launch a testbed virtual machine? (yes/no): " yn
+    case $yn in
+        [Yy]* ) 
+            main_function
+            break;;
+        [Nn]* ) 
+            echo "Exiting script."
+            exit 0;;
+        * ) 
+            echo "Please answer yes or no.";;
+    esac
+  done
+}
 
-# Install VirtualBox if not already installed
-if ! command -v virtualbox &>/dev/null; then
-  echo "Installing VirtualBox..."
-  apt-get update
-  apt-get install -y virtualbox
-fi
+# Main function to handle the VM setup and installation
+main_function() {
+  # Check if the script is run with root privileges
+  if [ "$EUID" -ne 0 ]; then
+    echo "Please run this script as root (use sudo)."
+    exit 1
+  fi
 
-# Install required packages for building VirtualBox Guest Additions
-echo "Installing required packages..."
-apt-get install -y build-essential dkms linux-headers-$(uname -r)
+  # Install VirtualBox if not already installed
+  if ! command -v virtualbox &>/dev/null; then
+    echo "Installing VirtualBox..."
+    apt-get update
+    apt-get install -y virtualbox
+  fi
 
-# Download Ubuntu 16.04 ISO if not already present
-ubuntu_iso_url="http://releases.ubuntu.com/16.04/ubuntu-16.04.7-desktop-amd64.iso"
-ubuntu_iso_file="ubuntu-16.04.7-desktop-amd64.iso"
+  # Install required packages for building VirtualBox Guest Additions
+  echo "Installing required packages..."
+  apt-get install -y build-essential dkms linux-headers-$(uname -r)
 
-if [ ! -f "$ubuntu_iso_file" ]; then
-  echo "Downloading Ubuntu 16.04 ISO..."
-  wget "$ubuntu_iso_url"
-fi
+  # Download Ubuntu 16.04 ISO if not already present
+  ubuntu_iso_url="http://releases.ubuntu.com/16.04/ubuntu-16.04.7-desktop-amd64.iso"
+  ubuntu_iso_file="ubuntu-16.04.7-desktop-amd64.iso"
 
-# Create and start a new Virtual Machine
-vbox_name="Ubuntu16.04_VM"
-vbox_os_type="Ubuntu_64"
+  if [ ! -f "$ubuntu_iso_file" ]; then
+    echo "Downloading Ubuntu 16.04 ISO..."
+    wget "$ubuntu_iso_url"
+  fi
 
-echo "Creating and configuring Virtual Machine..."
-VBoxManage createvm --name "$vbox_name" --ostype "$vbox_os_type" --register
-VBoxManage modifyvm "$vbox_name" --memory 2048 --vram 128 --cpus 2
-VBoxManage storagectl "$vbox_name" --name "IDE Controller" --add ide
-VBoxManage storageattach "$vbox_name" --storagectl "IDE Controller" --port 0 --device 0 --type dvddrive --medium "$ubuntu_iso_file"
-VBoxManage modifyvm "$vbox_name" --vrde on
+  # Create and start a new Virtual Machine
+  vbox_name="Ubuntu16.04_VM"
+  vbox_os_type="Ubuntu_64"
 
-# Enable USB support in VirtualBox
-VBoxManage modifyvm "$vbox_name" --usb on
-VBoxManage modifyvm "$vbox_name" --usbehci on
+  echo "Creating and configuring Virtual Machine..."
+  VBoxManage createvm --name "$vbox_name" --ostype "$vbox_os_type" --register
+  VBoxManage modifyvm "$vbox_name" --memory 2048 --vram 128 --cpus 2
+  VBoxManage storagectl "$vbox_name" --name "IDE Controller" --add ide
+  VBoxManage storageattach "$vbox_name" --storagectl "IDE Controller" --port 0 --device 0 --type dvddrive --medium "$ubuntu_iso_file"
+  VBoxManage modifyvm "$vbox_name" --vrde on
 
-# Start the VM
-echo "Starting Virtual Machine..."
-VBoxManage startvm "$vbox_name" --vrde=off
+  # Enable USB support in VirtualBox
+  VBoxManage modifyvm "$vbox_name" --usb on
+  VBoxManage modifyvm "$vbox_name" --usbehci on
 
-echo "Please wait for the Ubuntu 16.04 installation to complete..."
-echo "Once the installation is done, you can install VirtualBox Guest Additions."
+  # Start the VM
+  echo "Starting Virtual Machine..."
+  VBoxManage startvm "$vbox_name" --vrde=off
 
-# Clean up
-rm -f "$ubuntu_iso_file"
+  echo "Please wait for the Ubuntu 16.04 installation to complete..."
+  echo "Once the installation is done, you can install VirtualBox Guest Additions."
 
-echo "Script execution completed."
+  # Clean up
+  rm -f "$ubuntu_iso_file"
+
+  echo "Script execution completed."
+}
+
+# Execute the user prompt function
+launch_testbed_vm
