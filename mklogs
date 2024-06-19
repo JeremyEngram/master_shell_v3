@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LOGDIR=/var/log
+LOGDIR="/var/log"
 
 echo
 echo "=========================================="
@@ -10,23 +10,21 @@ echo
 echo " CREATE A NEW LOG AND SET PERMISSIONS? "
 echo
 
-read -p "mklog:> " mklog | tee -a /var/log/newlogpaths.log;
+read -p "mklog:> " mklog
 
+# Log the new log file path
+echo "$LOGDIR/$mklog.log" | tee -a /var/log/newlogpaths.log
 
-sudo touch '$LOGDIR/$mklog.log' && echo "CREATED $mklog.log in $LOGDIR!"; 
-
-echo
-
-echo "  ######  SETTING $LODIR/$mklog PERMISSIONS  ######  " 
-
-echo
-
-sudo chown root:adm '$LOGDIR/$mklog.log' && sudo chmod 775 '$LOGDIR/$mklog.log'
+# Create the new log file
+sudo touch "$LOGDIR/$mklog.log" && echo "CREATED $mklog.log in $LOGDIR!" 
 
 echo
+echo "  ######  SETTING $LOGDIR/$mklog PERMISSIONS  ######  " 
+echo
 
-echo "sudo chown root:adm '$LOGDIR/$mklog.log'; sudo chmod 775 '$LOGDIR/$mklog.log'"; 
+# Set the file owner and permissions
+sudo chown root:adm "$LOGDIR/$mklog.log" && sudo chmod 775 "$LOGDIR/$mklog.log"
+
+echo
+echo "sudo chown root:adm '$LOGDIR/$mklog.log'; sudo chmod 775 '$LOGDIR/$mklog.log'"
 echo "'$LOGDIR/$mklog.log' PERMISSIONS SET AND IS NOW WRITEABLE FOR SHELL OUTPUT!"
-
-
-
