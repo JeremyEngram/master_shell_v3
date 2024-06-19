@@ -1,23 +1,49 @@
 #!/bin/bash
 
-# Unmount prtitions first
-#sudo umount /dev/sda2
-#sudo umount /dev/sda3
+# Function to unmount partitions
+unmount_partitions() {
+  echo "Unmounting partitions..."
+  # Uncomment the lines below if you need to unmount specific partitions
+  # sudo umount /dev/sda2
+  # sudo umount /dev/sda3
+}
 
-# Backup the original GRUB configuration file
-sudo cp /boot/grub/grub.cfg /boot/grub/grub.cfg.bak
+# Function to backup the original GRUB configuration file
+backup_grub_config() {
+  echo "Backing up the original GRUB configuration file..."
+  sudo cp /boot/grub/grub.cfg /boot/grub/grub.cfg.bak
+}
 
-# Generate a new GRUB configuration file
-sudo grub-mkconfig -o /boot/grub/grub.cfg
+# Function to generate a new GRUB configuration file
+generate_grub_config() {
+  echo "Generating a new GRUB configuration file..."
+  sudo grub-mkconfig -o /boot/grub/grub.cfg
+}
 
-# Get the UUID of the new root partition
-new_root_uuid=$(sudo blkid -s UUID -o value /dev/sda3)
+# Function to update the GRUB configuration file with the new root UUID
+update_grub_config() {
+  echo "Updating the GRUB configuration file with the new root UUID..."
+  new_root_uuid=$(sudo blkid -s UUID -o value /dev/sda3)
+  sudo sed -i "s/ROOT=UUID=[a-zA-Z0-9\-]*/ROOT=UUID=$new_root_uuid/" /boot/grub/grub.cfg
+}
 
-# Update the GRUB configuration file
-sudo sed -i "s/ROOT=UUID=[a-zA-Z0-9\-]*/ROOT=UUID=$new_root_uuid/" /boot/grub/grub.cfg
+# Function to display the modified GRUB configuration file
+display_grub_config() {
+  echo "Displaying the modified GRUB configuration file..."
+  cat /boot/grub/grub.cfg
+}
 
-# Display the modified GRUB configuration file
-cat /boot/grub/grub.cfg
+# Main script execution
+main() {
+  unmount_partitions
+  backup_grub_config
+  generate_grub_config
+  update_grub_config
+  display_grub_config
 
-# Check your changes first
-echo "UPDATE GRUB:> sudo update-grub"
+  echo "Check your changes and update GRUB if necessary:"
+  echo "UPDATE GRUB:> sudo update-grub"
+}
+
+# Execute the main function
+main
